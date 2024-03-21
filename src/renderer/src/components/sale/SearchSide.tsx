@@ -220,14 +220,22 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
     handleSaleAs
   ])
 
-  const disableMode = saledProducts?.find(
-    (p) =>
-      p.saled_count === 0 ||
-      p.saled_count < 0 ||
-      p.cost === 0 ||
-      p.saled_count > p.count ||
-      p.saled_price <= 0
-  )
+  const disableMode = useMemo(() => {
+    return saledProducts?.find(
+      (p) =>
+        p.saled_count === 0 ||
+        p.saled_count < 0 ||
+        p.cost === 0 ||
+        p.saled_count > p.count ||
+        p.saled_price <= 0
+    )
+  }, [saledProducts])
+
+  const total = useMemo(() => {
+    return saledProducts
+      ?.reduce((a, b) => a + b.saled_price * b.saled_count * (1 - discount / 100), 0)
+      .toLocaleString('ru')
+  }, [saledProducts, discount])
 
   return (
     <Box
@@ -249,11 +257,7 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
         }}
       >
         <Typography>
-          <b>{langFormat({ uzb: 'Jami', ru: 'Всего', en: 'Total' })}: </b>{' '}
-          {saledProducts
-            ?.reduce((a, b) => a + b.saled_price * b.saled_count * (1 - discount / 100), 0)
-            .toLocaleString('ru')}{' '}
-          so'm
+          <b>{langFormat({ uzb: 'Jami', ru: 'Всего', en: 'Total' })}: </b> {total} so'm
         </Typography>
       </Box>
       <ButtonGroup

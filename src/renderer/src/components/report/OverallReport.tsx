@@ -6,6 +6,7 @@ import { useGetSaledProducts } from '../../hooks/sale'
 import { MONEY_REASON, SALE_FORM } from '../../models/types'
 import { useGetRefunds } from '../../hooks/refunds'
 import { langFormat } from '../../functions/langFormat'
+import { useMemo } from 'react'
 
 const Head = (): JSX.Element => (
   <TableRow sx={{ bgcolor: 'primary.main', color: 'white' }}>
@@ -50,25 +51,35 @@ const Body = (): JSX.Element => {
   const { data: saledProducts } = useGetSaledProducts()
   const { data: refunds } = useGetRefunds()
 
-  const putMoney = money
-    ?.filter((m) => m.reason === MONEY_REASON.PUT)
-    ?.reduce((a, b) => a + b.value, 0)
-  const takenMoney = money
-    ?.filter((m) => m.reason === MONEY_REASON.TAKE)
-    ?.reduce((a, b) => a + b.value, 0)
-  const myLoans = shops?.reduce((a, b) => a + b.loan_price, 0)
-  const recived = shops?.reduce(
-    (a, b) => a + b?.products.reduce((x, y) => x + y.count * y.cost, 0),
-    0
+  const putMoney = useMemo(
+    () => money?.filter((m) => m.reason === MONEY_REASON.PUT)?.reduce((a, b) => a + b.value, 0),
+    [money]
   )
-  const earned = saledProducts?.reduce(
-    (a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100),
-    0
+  const takenMoney = useMemo(
+    () => money?.filter((m) => m.reason === MONEY_REASON.TAKE)?.reduce((a, b) => a + b.value, 0),
+    [money]
   )
-  const refunded = refunds?.reduce((a, b) => a + b.count * b.price, 0)
-  const loans = saledProducts
-    ?.filter((p) => p.sale_form === SALE_FORM.LOAN)
-    ?.reduce((a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100), 0)
+  const myLoans = useMemo(() => shops?.reduce((a, b) => a + b.loan_price, 0), [shops])
+  const recived = useMemo(
+    () => shops?.reduce((a, b) => a + b?.products.reduce((x, y) => x + y.count * y.cost, 0), 0),
+    [shops]
+  )
+  const earned = useMemo(
+    () =>
+      saledProducts?.reduce(
+        (a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100),
+        0
+      ),
+    [saledProducts]
+  )
+  const refunded = useMemo(() => refunds?.reduce((a, b) => a + b.count * b.price, 0), [refunds])
+  const loans = useMemo(
+    () =>
+      saledProducts
+        ?.filter((p) => p.sale_form === SALE_FORM.LOAN)
+        ?.reduce((a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100), 0),
+    [saledProducts]
+  )
 
   return (
     <TableRow>
