@@ -63,7 +63,13 @@ function Sale(): JSX.Element {
     async (products: Saled_Product_Type[]) => {
       if (
         products.find(
-          (p) => p.saled_count === 0 || p.saled_count < 0 || p.cost === 0 || p.saled_count > p.count
+          (p) =>
+            p.saled_count === 0 ||
+            p.saled_count < 0 ||
+            p.cost === 0 ||
+            p.saled_count > p.count ||
+            p.saled_price === 0 ||
+            p.saled_price < 0
         )
       )
         return

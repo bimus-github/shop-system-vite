@@ -1,14 +1,14 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useTransition } from 'react'
 import {
   MRT_ColumnDef,
   MRT_Row,
-  MRT_TableOptions,
   MaterialReactTable,
   useMaterialReactTable
 } from 'material-react-table'
-import { Box, IconButton, Tooltip } from '@mui/material'
-import { Delete, Edit } from '@mui/icons-material'
+import { Box, IconButton, TextField, Tooltip } from '@mui/material'
+import { Delete } from '@mui/icons-material'
 import { Saled_Product_Type } from '../../models/types'
 import {
   useDeleteProductFromRoom,
@@ -18,7 +18,24 @@ import {
 import { langFormat } from '../../functions/langFormat'
 
 const SaledProductsList = ({ currentPage }: { currentPage: number }): JSX.Element => {
+  const transition = useTransition()
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
+
+  //call READ hook
+  const {
+    data: fetchedProducts,
+    isError: isLoadingProductsError,
+    isFetching: isFetchingProducts,
+    isLoading: isLoadingProducts
+  } = useGetRoomProducts(currentPage.toString())
+  //call UPDATE hook
+  const { mutateAsync: updateproducts, isPending: isUpdatingproducts } = useUpdateProductInRoom(
+    currentPage.toString()
+  )
+  //call DELETE hook
+  const { mutateAsync: deleteproducts, isPending: isDeletingproducts } = useDeleteProductFromRoom(
+    currentPage.toString()
+  )
 
   const columns = useMemo<MRT_ColumnDef<Saled_Product_Type>[]>(
     () => [
@@ -38,91 +55,86 @@ const SaledProductsList = ({ currentPage }: { currentPage: number }): JSX.Elemen
         accessorKey: 'saled_price',
         header: langFormat({ uzb: 'Narxi', ru: 'Цена', en: 'Price' }),
         size: 80,
-        muiEditTextFieldProps: {
-          required: true,
-          variant: 'standard',
-          error: !!validationErrors.saled_price,
-          helperText: validationErrors.saled_price,
-          onFocus: () => {
-            delete validationErrors.saled_price
-            setValidationErrors(validationErrors)
-          }
+        enableEditing: false,
+
+        Cell({ cell, row }) {
+          return (
+            <TextField
+              value={cell.getValue() === 0 ? '' : cell.getValue()}
+              type="text"
+              variant="outlined"
+              onChange={(e) => {
+                transition[1](() => {
+                  updateproducts({
+                    id: row.original.id,
+                    saledId: row.original.saledId,
+                    buyers_name: row.original.buyers_name,
+                    discount: row.original.discount,
+                    saled_date: row.original.saled_date,
+                    saled_price: typeof +e.target.value === 'number' ? +e.target.value : 0,
+                    saled_count: row.original.saled_count,
+                    name: row.original.name,
+                    price: row.original.price,
+                    cost: row.original.cost,
+                    count: row.original.count,
+                    barcode: row.original.barcode,
+                    sale_form: row.original.sale_form
+                  })
+                })
+              }}
+            />
+          )
         }
       },
       {
         accessorKey: 'saled_count',
         header: langFormat({ uzb: 'Soni', ru: 'Количество', en: 'Count' }),
         size: 50,
-        muiEditTextFieldProps: {
-          required: true,
-          variant: 'standard',
-          error: !!validationErrors.count,
-          helperText: validationErrors.count,
-          onFocus: () => {
-            delete validationErrors.count
-            setValidationErrors(validationErrors)
-          }
+        enableEditing: false,
+        Cell({ cell, row }) {
+          return (
+            <TextField
+              value={cell.getValue() === 0 ? '' : cell.getValue()}
+              type="text"
+              variant="outlined"
+              onChange={(e) => {
+                transition[1](() => {
+                  updateproducts({
+                    id: row.original.id,
+                    saledId: row.original.saledId,
+                    buyers_name: row.original.buyers_name,
+                    discount: row.original.discount,
+                    saled_date: row.original.saled_date,
+                    saled_price: row.original.saled_price,
+                    saled_count:
+                      typeof +e.target.value === 'number'
+                        ? +e.target.value > row.original.count
+                          ? row.original.count
+                          : +e.target.value < 0
+                            ? 0
+                            : +e.target.value
+                        : 0,
+                    name: row.original.name,
+                    price: row.original.price,
+                    cost: row.original.cost,
+                    count: row.original.count,
+                    barcode: row.original.barcode,
+                    sale_form: row.original.sale_form
+                  })
+                })
+              }}
+            />
+          )
         }
       }
     ],
     [validationErrors]
   )
 
-  //call READ hook
-  const {
-    data: fetchedProducts,
-    isError: isLoadingProductsError,
-    isFetching: isFetchingProducts,
-    isLoading: isLoadingProducts
-  } = useGetRoomProducts(currentPage.toString())
-  //call UPDATE hook
-  const { mutateAsync: updateproducts, isPending: isUpdatingproducts } = useUpdateProductInRoom(
-    currentPage.toString()
-  )
-  //call DELETE hook
-  const { mutateAsync: deleteproducts, isPending: isDeletingproducts } = useDeleteProductFromRoom(
-    currentPage.toString()
-  )
-
-  //UPDATE action
-  const handleSaveproducts: MRT_TableOptions<Saled_Product_Type>['onEditingRowSave'] = async ({
-    values,
-    table,
-    row
-  }) => {
-    const newValidationErrors = validateproducts(values)
-    if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors as Record<string, string | undefined>)
-      return
-    }
-
-    const updadetProduct: Saled_Product_Type = {
-      id: row.original.id,
-      saledId: row.original.saledId,
-      buyers_name: row.original.buyers_name,
-      discount: row.original.discount,
-      saled_date: row.original.saled_date,
-      saled_price: values.saled_price,
-      barcode: row.original.barcode,
-      cost: row.original.cost,
-      count: values.saled_count,
-      name: row.original.name,
-      price: row.original.price,
-      saled_count: values.saled_count,
-      sale_form: row.original.sale_form
-    }
-
-    setValidationErrors({})
-    await updateproducts(updadetProduct)
-    table.setEditingRow(null)
-  }
-
   //DELETE action
   const openDeleteConfirmModal = (row: MRT_Row<Saled_Product_Type>) => {
     deleteproducts(row.original.id)
   }
-
-  console.log(fetchedProducts)
 
   const table = useMaterialReactTable({
     columns,
@@ -132,9 +144,7 @@ const SaledProductsList = ({ currentPage }: { currentPage: number }): JSX.Elemen
     enableSorting: false,
     enableBottomToolbar: false,
     enableTopToolbar: false,
-    enableEditing: true,
     createDisplayMode: 'row',
-    editDisplayMode: 'row',
     getRowId: (row) => row.id,
     muiSearchTextFieldProps: {
       autoFocus: true,
@@ -166,23 +176,11 @@ const SaledProductsList = ({ currentPage }: { currentPage: number }): JSX.Elemen
         maxWidth: '100%'
       }
     },
-    onEditingRowSave: handleSaveproducts,
     onCreatingRowCancel: () => setValidationErrors({}),
     onEditingRowCancel: () => setValidationErrors({}),
     positionActionsColumn: 'last',
-    renderRowActions: ({ row, table }) => (
+    renderRowActions: ({ row }) => (
       <Box sx={{ display: 'flex', gap: '1rem' }}>
-        <Tooltip
-          title={langFormat({
-            uzb: 'Tahrirlash',
-            ru: 'Редактировать',
-            en: 'Edit'
-          })}
-        >
-          <IconButton onClick={() => table.setEditingRow(row)}>
-            <Edit />
-          </IconButton>
-        </Tooltip>
         <Tooltip title={langFormat({ uzb: 'O`chirish', ru: 'Удалить', en: 'Delete' })}>
           <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
             <Delete />
@@ -202,24 +200,3 @@ const SaledProductsList = ({ currentPage }: { currentPage: number }): JSX.Elemen
 }
 
 export default SaledProductsList
-
-const validateRequired = (value: string | number) => !!value.toString().length
-
-function validateproducts(products: Saled_Product_Type) {
-  return {
-    saled_price: !validateRequired(products.saled_price.toString())
-      ? langFormat({
-          uzb: 'Sotilish narxi kiritish shart',
-          ru: 'Укажите цену',
-          en: 'Enter price'
-        })
-      : null,
-    saled_count: !validateRequired(products.saled_count.toString())
-      ? langFormat({
-          uzb: 'Sotilish soni kiritish shart',
-          ru: 'Укажите количество',
-          en: 'Enter count'
-        })
-      : null
-  }
-}
