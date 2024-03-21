@@ -17,13 +17,7 @@ import {
 } from '../../hooks/room'
 import { langFormat } from '../../functions/langFormat'
 
-const SaledProductsList = ({ currentPage }: { currentPage: number }): JSX.Element => (
-  <Table currentPage={currentPage} />
-)
-
-export default SaledProductsList
-
-const Table = ({ currentPage }: { currentPage: number }): JSX.Element => {
+const SaledProductsList = ({ currentPage }: { currentPage: number }): JSX.Element => {
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
 
   const columns = useMemo<MRT_ColumnDef<Saled_Product_Type>[]>(
@@ -76,7 +70,7 @@ const Table = ({ currentPage }: { currentPage: number }): JSX.Element => {
 
   //call READ hook
   const {
-    data: fetchedProducts = [],
+    data: fetchedProducts,
     isError: isLoadingProductsError,
     isFetching: isFetchingProducts,
     isLoading: isLoadingProducts
@@ -128,9 +122,11 @@ const Table = ({ currentPage }: { currentPage: number }): JSX.Element => {
     deleteproducts(row.original.id)
   }
 
+  console.log(fetchedProducts)
+
   const table = useMaterialReactTable({
     columns,
-    data: fetchedProducts,
+    data: fetchedProducts || [],
     enableGlobalFilter: false,
     enablePagination: false,
     enableSorting: false,
@@ -204,6 +200,8 @@ const Table = ({ currentPage }: { currentPage: number }): JSX.Element => {
 
   return <MaterialReactTable table={table} />
 }
+
+export default SaledProductsList
 
 const validateRequired = (value: string | number) => !!value.toString().length
 

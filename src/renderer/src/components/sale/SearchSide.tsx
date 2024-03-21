@@ -98,6 +98,8 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
     product: Product_Type,
     table: MRT_TableInstance<Product_Type>
   ): void => {
+    console.log('handleAddProductToSaleSide')
+
     const newSaledProduct: Saled_Product_Type = {
       ...product,
       saledId: Math.random().toString(36).substring(7),
@@ -137,6 +139,8 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
     },
     muiTableBodyRowProps: ({ row, table }) => ({
       onClick: () => {
+        console.log(row.original)
+
         handleAddProductToSaleSide(row.original, table)
       }
     }),
@@ -290,7 +294,7 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
           size="small"
           disablePortal
           options={(clients || [])?.map((c) => c.name) || []}
-          onInputChange={(e, newValue) => setBuyer(newValue)}
+          onInputChange={(_e, newValue) => setBuyer(newValue)}
           renderInput={(params) => (
             <TextField
               {...params}
