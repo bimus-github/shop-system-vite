@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: shop-system
+productName: Shop System
 directories:
   buildResources: build
 files:
@@ -12,7 +12,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: shop-system
+  executableName: Shop System
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

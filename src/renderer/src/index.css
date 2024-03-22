@@ -1,0 +1,15 @@
+.footer {
+  position: sticky;
+  bottom: 10px;
+  z-index: 10000;
+  width: 100%;
+  padding-right: 10px;
+  text-align: end;
+
+  color: red;
+  font-size: 8px !important;
+
+  .bimus {
+    color: red;
+  }
+}
