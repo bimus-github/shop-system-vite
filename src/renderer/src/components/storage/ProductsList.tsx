@@ -21,6 +21,32 @@ import { langFormat } from '../../functions/langFormat'
 function ProductsList(): JSX.Element {
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
 
+  const {
+    data: fetchedProducts = [],
+    isError: isLoadingProductsError,
+    isFetching: isFetchingProducts,
+    isLoading: isLoadingProducts
+  } = useGetProductsInStorage()
+
+  const {
+    mutateAsync: createProduct,
+    isPending: isCreatingProduct,
+    failureReason,
+    data
+  } = useCreateProductToStorage()
+
+  const {
+    data: errorWhileDeleting,
+    mutateAsync: deleteProduct,
+    isPending: isDeleting
+  } = useDeleteProductFromStorage()
+
+  const {
+    data: updatedProduct,
+    mutateAsync: updateProduct,
+    isPending: isUpdatingProduct
+  } = useUpdateProductInStorage()
+
   const columns = useMemo<MRT_ColumnDef<Product_Type>[]>(
     () => [
       {
@@ -122,32 +148,6 @@ function ProductsList(): JSX.Element {
     ],
     [validationErrors]
   )
-
-  const {
-    data: fetchedProducts = [],
-    isError: isLoadingProductsError,
-    isFetching: isFetchingProducts,
-    isLoading: isLoadingProducts
-  } = useGetProductsInStorage()
-
-  const {
-    mutateAsync: createProduct,
-    isPending: isCreatingProduct,
-    failureReason,
-    data
-  } = useCreateProductToStorage()
-
-  const {
-    data: errorWhileDeleting,
-    mutateAsync: deleteProduct,
-    isPending: isDeleting
-  } = useDeleteProductFromStorage()
-
-  const {
-    data: updatedProduct,
-    mutateAsync: updateProduct,
-    isPending: isUpdatingProduct
-  } = useUpdateProductInStorage()
 
   const handleDeleteProduct = async (id: string) => {
     if (!confirm("O'chirishni xoxlaysizmi?")) return

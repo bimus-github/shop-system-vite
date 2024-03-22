@@ -147,7 +147,8 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
         uzb: 'Qidirish',
         ru: 'Поиск',
         en: 'Search'
-      })
+      }),
+      tabIndex: 1
     },
     getRowId: (row) => row.id,
     muiTableContainerProps: {
@@ -253,10 +254,12 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
           borderColor: 'primary.textContrast',
           borderRadius: 2,
           mr: 'auto',
-          p: 2
+          p: 2,
+          bgcolor: colors.deepOrange[500],
+          width: '100%'
         }}
       >
-        <Typography>
+        <Typography color="white" fontSize={20}>
           <b>{langFormat({ uzb: 'Jami', ru: 'Всего', en: 'Total' })}: </b> {total} so'm
         </Typography>
       </Box>
@@ -269,7 +272,6 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
         }}
         variant="contained"
         size="small"
-        disabled={!!disableMode}
       >
         <Button
           onClick={() => handleSaleAs(SALE_FORM.CASH)}
@@ -300,6 +302,7 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
           disablePortal
           options={(clients || [])?.map((c) => c.name) || []}
           onInputChange={(_e, newValue) => setBuyer(newValue)}
+          tabIndex={3}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -320,6 +323,7 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
           label={langFormat({ uzb: 'Chegirma', ru: 'Скидка', en: 'Discount' })}
           type="number"
           value={discount}
+          tabIndex={2}
           onChange={(e) => setDiscount(+e.target.value)}
         />
       </Box>
@@ -332,7 +336,6 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
         }}
         variant="contained"
         size="small"
-        disabled={!!disableMode}
       >
         <Button
           onClick={() => handleClickResetRoom()}
@@ -349,6 +352,7 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
             fontWeight: '800',
             color: 'white'
           }}
+          disabled={!!disableMode}
         >
           {langFormat({ uzb: 'Qaytarish', ru: 'Возврат', en: 'Refund' })} [F5]
         </Button>

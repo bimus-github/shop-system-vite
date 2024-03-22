@@ -1,6 +1,6 @@
 .footer {
   position: sticky;
-  bottom: 10px;
+  top: 10px;
   z-index: 10000;
   width: 100%;
   padding-right: 10px;

@@ -11,16 +11,25 @@ import {
 import { useMemo, useState } from 'react'
 import { SALE_FORM, Saled_Product_Type } from '../../models/types'
 import { Autocomplete, Box, IconButton, TextField, Tooltip, Typography } from '@mui/material'
-import { ContentCopy, Delete, Edit, Refresh } from '@mui/icons-material'
+import { ContentCopy, CopyAll, Delete, Edit, Refresh } from '@mui/icons-material'
 import { saleFormOptions } from '../../constants'
 import { useDeleteSaledProduct, useGetSaledProducts, useUpdateSaledProduct } from '../../hooks/sale'
 import { useGetClients } from '../../hooks/client'
 import { langFormat } from '../../functions/langFormat'
+import { saveAllSelected } from '@renderer/functions/saveAllSelected'
 const { clipboard } = window.require('electron')
 
 function SaledProducts(): JSX.Element {
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
+
+  const { data: data = [], isFetching: isFetchingSaledProducts } = useGetSaledProducts()
+
+  const { data: resultUpdating, mutateAsync: updateSaledProduct } = useUpdateSaledProduct()
+
+  const { data: resultDeleting, mutateAsync: deleteSaledProduct } = useDeleteSaledProduct()
+
   const { data: clients } = useGetClients()
+
   const columns = useMemo<MRT_ColumnDef<Saled_Product_Type>[]>(
     () => [
       {
@@ -31,7 +40,6 @@ function SaledProducts(): JSX.Element {
           en: 'Buyer'
         }),
         editVariant: 'select',
-        size: 100,
         Filter: (props) => (
           <Autocomplete
             {...props}
@@ -44,7 +52,7 @@ function SaledProducts(): JSX.Element {
               <TextField
                 {...params}
                 variant="standard"
-                sx={{ width: '100px' }}
+                sx={{ width: '200px' }}
                 placeholder={langFormat({
                   uzb: 'Xaridor',
                   ru: 'Покупатель',
@@ -218,16 +226,20 @@ function SaledProducts(): JSX.Element {
         enableEditing: false,
         size: 70,
         Footer: ({ table }) => {
-          const total = table
-            .getFilteredRowModel()
-            .rows.reduce(
-              (sum, row) =>
-                sum +
-                row.original.saled_price *
-                  row.original.saled_count *
-                  (1 - row.original.discount / 100),
-              0
-            )
+          const total = useMemo(
+            () =>
+              table
+                .getFilteredRowModel()
+                .rows.reduce(
+                  (sum, row) =>
+                    sum +
+                    row.original.saled_price *
+                      row.original.saled_count *
+                      (1 - row.original.discount / 100),
+                  0
+                ),
+            [table]
+          )
           return <Typography fontWeight={'bold'}>{total.toLocaleString()}</Typography>
         }
       },
@@ -272,16 +284,21 @@ function SaledProducts(): JSX.Element {
         enableEditing: false,
         size: 70,
         Footer: ({ table }) => {
-          const total = table
-            .getFilteredRowModel()
-            .rows.reduce(
-              (sum, row) =>
-                sum +
-                (row.original.saled_price * (1 - row.original.discount / 100) - row.original.cost) *
-                  row.original.saled_count,
-              0
-            )
-            .toLocaleString()
+          const total = useMemo(
+            () =>
+              table
+                .getFilteredRowModel()
+                .rows.reduce(
+                  (sum, row) =>
+                    sum +
+                    (row.original.saled_price * (1 - row.original.discount / 100) -
+                      row.original.cost) *
+                      row.original.saled_count,
+                  0
+                )
+                .toLocaleString(),
+            [table]
+          )
           return <Typography fontWeight={'bold'}>{total.toLocaleString()}</Typography>
         }
       },
@@ -315,14 +332,8 @@ function SaledProducts(): JSX.Element {
         size: 130
       }
     ],
-    [validationErrors]
+    [validationErrors, langFormat, saleFormOptions, updateSaledProduct]
   )
-
-  const { data, isPending: isFetchingSaledProducts } = useGetSaledProducts()
-
-  const { data: resultUpdating, mutateAsync: updateSaledProduct } = useUpdateSaledProduct()
-
-  const { data: resultDeleting, mutateAsync: deleteSaledProduct } = useDeleteSaledProduct()
 
   const handleUpdateSaledProduct: MRT_TableOptions<Saled_Product_Type>['onEditingRowSave'] =
     async ({ values, table, row }) => {
@@ -396,6 +407,11 @@ function SaledProducts(): JSX.Element {
     })
   }
 
+  const handleSaveAll = (table: MRT_TableInstance<Saled_Product_Type>) => {
+    const selectedProducts = table.getSelectedRowModel().rows
+    saveAllSelected(selectedProducts)
+  }
+
   const table = useMaterialReactTable({
     columns,
     data: data || [],
@@ -410,6 +426,7 @@ function SaledProducts(): JSX.Element {
     positionPagination: 'top',
     paginationDisplayMode: 'default',
     positionGlobalFilter: 'left',
+    selectAllMode: 'all',
     muiPaginationProps: {
       rowsPerPageOptions: [30, data?.length || 50]
     },
@@ -514,21 +531,37 @@ Jami narx: ${sale.saled_price * (1 - sale.discount / 100) * sale.saled_count} so
       showAlertBanner: !!resultUpdating || !!resultDeleting,
       showColumnFilters: true
     },
+    muiSelectAllCheckboxProps: {
+      color: 'success'
+    },
     renderTopToolbarCustomActions: ({ table }) => {
       return (
-        <Box>
+        <Box sx={{ display: 'flex', gap: '1rem', justifyContent: 'flex-start', width: '100%' }}>
           {table.getSelectedRowModel().rows.length > 0 && (
-            <Tooltip
-              title={langFormat({
-                uzb: 'Pul shaklini o`zgartirish',
-                en: 'Change form of payment',
-                ru: 'Изменить счет'
-              })}
-            >
-              <IconButton onClick={() => handleChangeSelectedRows(table)}>
-                <Refresh />
-              </IconButton>
-            </Tooltip>
+            <>
+              <Tooltip
+                title={langFormat({
+                  uzb: 'Pul shaklini o`zgartirish',
+                  en: 'Change form of payment',
+                  ru: 'Изменить счет'
+                })}
+              >
+                <IconButton onClick={() => handleChangeSelectedRows(table)}>
+                  <Refresh />
+                </IconButton>
+              </Tooltip>
+              <Tooltip
+                title={langFormat({
+                  uzb: 'Saqlash',
+                  en: 'Save',
+                  ru: 'Сохранить'
+                })}
+              >
+                <IconButton onClick={() => handleSaveAll(table)}>
+                  <CopyAll />
+                </IconButton>
+              </Tooltip>
+            </>
           )}
         </Box>
       )

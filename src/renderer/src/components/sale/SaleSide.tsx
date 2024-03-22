@@ -144,7 +144,7 @@ const SaledProductsList = ({ currentPage }: { currentPage: number }): JSX.Elemen
     enableSorting: false,
     enableBottomToolbar: false,
     enableTopToolbar: false,
-    createDisplayMode: 'row',
+    enableRowActions: true,
     getRowId: (row) => row.id,
     muiSearchTextFieldProps: {
       autoFocus: true,

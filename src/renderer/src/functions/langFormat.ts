@@ -1,23 +1,16 @@
-import { LANGUAGE } from "../models/types";
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+import { LANGUAGE } from '../models/types'
 
-export const langFormat = ({
-  uzb,
-  ru,
-  en,
-}: {
-  uzb: string;
-  ru: string;
-  en: string;
-}) => {
-  const l = localStorage.getItem("lang") as LANGUAGE;
+export const langFormat = ({ uzb, ru, en }: { uzb: string; ru: string; en: string }) => {
+  const l = localStorage.getItem('lang') as LANGUAGE
   switch (l) {
     case LANGUAGE.UZB:
-      return uzb;
+      return uzb
     case LANGUAGE.RU:
-      return ru;
+      return ru
     case LANGUAGE.EN:
-      return en;
+      return en
     default:
-      return uzb;
+      return uzb
   }
-};
+}

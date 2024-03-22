@@ -13,7 +13,8 @@ import {
   ListItemIcon,
   ListItemText,
   Tooltip,
-  colors
+  colors,
+  Link
 } from '@mui/material'
 
 import {
@@ -78,6 +79,7 @@ export default function MiniDrawer(): JSX.Element {
           {routes.map((route) => (
             <Tooltip
               key={route.path}
+              placement="right"
               title={langFormat({
                 uzb: route.title.uzb,
                 en: route.title.en,
@@ -132,9 +134,49 @@ export default function MiniDrawer(): JSX.Element {
           ))}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, position: 'relative' }}>
         <DrawerHeader />
         <Outlet />
+        <Box
+          sx={{
+            position: 'fixed',
+            bottom: '5px',
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '1rem',
+            zIndex: 10000
+          }}
+        >
+          <Typography sx={{ textAlign: 'center', fontSize: '0.6rem', color: 'red' }}>
+            MADE WITH ❤️ BY{' '}
+            <Link
+              sx={{ fontSize: 'inherit', color: 'inherit', textDecoration: 'underline' }}
+              target={'_blank'}
+              href={'https://github.com/bimus-github'}
+            >
+              BIMUS
+            </Link>
+          </Typography>
+          <Typography sx={{ textAlign: 'center', fontSize: '0.6rem', color: 'red' }}>
+            <Link
+              sx={{ fontSize: 'inherit', color: 'inherit', textDecoration: 'underline' }}
+              target={'_blank'}
+              href={'tel:+998901617169'}
+            >
+              TEL 📞
+            </Link>
+          </Typography>
+          <Typography sx={{ textAlign: 'center', fontSize: '0.6rem', color: 'red' }}>
+            <Link
+              sx={{ fontSize: 'inherit', color: 'inherit', textDecoration: 'underline' }}
+              target={'_blank'}
+              href={'https://t.me/bimus2022'}
+            >
+              TELEGRAM 📞
+            </Link>
+          </Typography>
+        </Box>
       </Box>
     </Box>
   )
