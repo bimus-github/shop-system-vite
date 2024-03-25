@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { Message_Forms } from '../../models/message'
-import { Product_Type, Saled_Product_Type } from '../../models/types'
+import { Product_Type, SALE_FORM, Saled_Product_Type } from '../../models/types'
 import ProductModel from '../schemas/productModel'
 import SaledProductModel from '../schemas/saledModel'
 import { addToStock } from './product'
@@ -74,3 +74,35 @@ export const deleteSaledProduct = async (saledId: string) => {
     console.log(error)
   }
 }
+
+// export const addAllSaledProducts = async () => {
+//   try {
+//     SaledProductModel.insertMany(
+//       sales.map(
+//         (product) =>
+//           ({
+//             id: product.id,
+//             name: product.name,
+//             barcode: product.code,
+//             count: product.count,
+//             buyers_name: product.buyer,
+//             price: product.salePrice,
+//             cost: product.commingPrice,
+//             saled_date: product.saledDate,
+//             discount: product.discount,
+//             sale_form:
+//               product.status === 'cash'
+//                 ? SALE_FORM.CASH
+//                 : product.status === 'loan'
+//                   ? SALE_FORM.LOAN
+//                   : SALE_FORM.CARD,
+//             saledId: product.saledId,
+//             saled_count: product.quantity,
+//             saled_price: product.saledDate
+//           }) as Saled_Product_Type
+//       )
+//     )
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
