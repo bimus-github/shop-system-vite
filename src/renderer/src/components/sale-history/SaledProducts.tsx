@@ -3,32 +3,32 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   MRT_ColumnDef,
-  MRT_TableInstance,
   MRT_TableOptions,
   MaterialReactTable,
   useMaterialReactTable
 } from 'material-react-table'
 import { useMemo, useState } from 'react'
 import { SALE_FORM, Saled_Product_Type } from '../../models/types'
-import { Autocomplete, Box, IconButton, TextField, Tooltip, Typography } from '@mui/material'
-import { ContentCopy, CopyAll, Delete, Edit, Refresh } from '@mui/icons-material'
+import { Typography } from '@mui/material'
 import { saleFormOptions } from '../../constants'
-import { useDeleteSaledProduct, useGetSaledProducts, useUpdateSaledProduct } from '../../hooks/sale'
-import { useGetClients } from '../../hooks/client'
+import { useGetSaledProducts, useUpdateSaledProduct } from '../../hooks/sale'
 import { langFormat } from '../../functions/langFormat'
-import { saveAllSelected } from '@renderer/functions/saveAllSelected'
-const { clipboard } = window.require('electron')
+import RowActions from './RowActions'
+import TopToolbarCustomActions from './TopToolbarCustomActions'
+import {
+  FilterByBuyer,
+  FilterBySaleForm,
+  PriceFooter,
+  ProfitFooter,
+  SalefFromCell
+} from './ColumnCompenents'
 
 function SaledProducts(): JSX.Element {
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
 
-  const { data: data = [], isFetching: isFetchingSaledProducts } = useGetSaledProducts()
+  const { data = [], isFetching: isFetchingSaledProducts } = useGetSaledProducts()
 
   const { data: resultUpdating, mutateAsync: updateSaledProduct } = useUpdateSaledProduct()
-
-  const { data: resultDeleting, mutateAsync: deleteSaledProduct } = useDeleteSaledProduct()
-
-  const { data: clients } = useGetClients()
 
   const columns = useMemo<MRT_ColumnDef<Saled_Product_Type>[]>(
     () => [
@@ -40,28 +40,7 @@ function SaledProducts(): JSX.Element {
           en: 'Buyer'
         }),
         editVariant: 'select',
-        Filter: (props) => (
-          <Autocomplete
-            {...props}
-            autoFocus={true}
-            options={clients?.map((client) => client.name) || []}
-            onChange={(_, value) => {
-              props.column.setFilterValue(value)
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="standard"
-                sx={{ width: '200px' }}
-                placeholder={langFormat({
-                  uzb: 'Xaridor',
-                  ru: 'Покупатель',
-                  en: 'Buyer'
-                })}
-              />
-            )}
-          />
-        )
+        Filter: FilterByBuyer
       },
       {
         accessorKey: 'sale_form',
@@ -84,98 +63,8 @@ function SaledProducts(): JSX.Element {
           }
         },
 
-        Filter: (props) => (
-          <Autocomplete
-            {...props}
-            options={Object.values(SALE_FORM)}
-            defaultValue={SALE_FORM.LOAN}
-            onInputChange={(_, value) => {
-              props.column.setFilterValue(value)
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="standard"
-                sx={{ width: '100px' }}
-                placeholder={langFormat({
-                  uzb: 'Sotish formasi',
-                  ru: 'Форма продажи',
-                  en: 'Sale form'
-                })}
-              />
-            )}
-          />
-        ),
-        Cell(props) {
-          const data = props.row.original
-          const form = props.row.original.sale_form
-          return (
-            <Box
-              {...props}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                flexDirection: 'row',
-                gap: '0.5rem'
-              }}
-            >
-              <Typography sx={{ color: form === SALE_FORM.LOAN ? 'red' : '' }}>
-                {data.sale_form}
-              </Typography>
-              <Tooltip
-                title={langFormat({
-                  uzb: 'Pul shaklini o`zgartirish',
-                  ru: 'Изменить счет',
-                  en: 'Change form of payment'
-                })}
-              >
-                <IconButton
-                  onClick={() => {
-                    if (
-                      !confirm(
-                        langFormat({
-                          uzb: 'O`zgartirishni istaysizmi?',
-                          ru: 'Изменить?',
-                          en: 'Change?'
-                        })
-                      )
-                    )
-                      return
-
-                    const newSaleForm =
-                      data.sale_form === SALE_FORM.CASH
-                        ? SALE_FORM.CARD
-                        : data.sale_form === SALE_FORM.LOAN
-                          ? SALE_FORM.CASH
-                          : SALE_FORM.LOAN
-
-                    const saledProduct: Saled_Product_Type = {
-                      id: data.id,
-                      name: data.name,
-                      barcode: data.barcode,
-                      saled_count: data.saled_count,
-                      cost: data.cost,
-                      saled_price: data.saled_price,
-                      sale_form: newSaleForm,
-                      buyers_name: data.buyers_name,
-                      discount: data.discount,
-                      saled_date: data.saled_date,
-                      count: data.count,
-                      price: data.price,
-                      saledId: data.saledId
-                    }
-
-                    updateSaledProduct(saledProduct).then((result) => {
-                      alert(result || 'success')
-                    })
-                  }}
-                >
-                  <Refresh />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          )
-        }
+        Filter: FilterBySaleForm,
+        Cell: SalefFromCell
       },
       {
         accessorKey: 'name',
@@ -225,23 +114,7 @@ function SaledProducts(): JSX.Element {
         }),
         enableEditing: false,
         size: 70,
-        Footer: ({ table }) => {
-          const total = useMemo(
-            () =>
-              table
-                .getFilteredRowModel()
-                .rows.reduce(
-                  (sum, row) =>
-                    sum +
-                    row.original.saled_price *
-                      row.original.saled_count *
-                      (1 - row.original.discount / 100),
-                  0
-                ),
-            [table]
-          )
-          return <Typography fontWeight={'bold'}>{total.toLocaleString()}</Typography>
-        }
+        Footer: PriceFooter
       },
       {
         accessorKey: 'cost',
@@ -283,24 +156,7 @@ function SaledProducts(): JSX.Element {
         }),
         enableEditing: false,
         size: 70,
-        Footer: ({ table }) => {
-          const total = useMemo(
-            () =>
-              table
-                .getFilteredRowModel()
-                .rows.reduce(
-                  (sum, row) =>
-                    sum +
-                    (row.original.saled_price * (1 - row.original.discount / 100) -
-                      row.original.cost) *
-                      row.original.saled_count,
-                  0
-                )
-                .toLocaleString(),
-            [table]
-          )
-          return <Typography fontWeight={'bold'}>{total.toLocaleString()}</Typography>
-        }
+        Footer: ProfitFooter
       },
       {
         accessorKey: 'discount',
@@ -332,7 +188,7 @@ function SaledProducts(): JSX.Element {
         size: 130
       }
     ],
-    [validationErrors, langFormat, saleFormOptions, updateSaledProduct]
+    [validationErrors]
   )
 
   const handleUpdateSaledProduct: MRT_TableOptions<Saled_Product_Type>['onEditingRowSave'] =
@@ -365,53 +221,6 @@ function SaledProducts(): JSX.Element {
       })
     }
 
-  const handleChangeSelectedRows = async (table: MRT_TableInstance<Saled_Product_Type>) => {
-    if (
-      !confirm(
-        langFormat({
-          uzb: "Barcha belgilangan qatorni sotuv shaklini o'chirmoqchimisiz?",
-          en: 'Are you sure you want to change sale form of all selected rows?',
-          ru: 'Вы уверены, что хотите изменить форму продажи для всех выбранных строк?'
-        })
-      )
-    )
-      return
-
-    table.getSelectedRowModel().rows.forEach(async (row) => {
-      const newSaleForm =
-        row.original.sale_form === SALE_FORM.CASH
-          ? SALE_FORM.CARD
-          : row.original.sale_form === SALE_FORM.LOAN
-            ? SALE_FORM.CASH
-            : SALE_FORM.LOAN
-
-      const saledProduct: Saled_Product_Type = {
-        id: row.original.id,
-        name: row.original.name,
-        barcode: row.original.barcode,
-        saled_count: row.original.saled_count,
-        cost: row.original.cost,
-        saled_price: row.original.saled_price,
-        sale_form: newSaleForm,
-        buyers_name: row.original.buyers_name,
-        discount: row.original.discount,
-        saled_date: row.original.saled_date,
-        count: row.original.count,
-        price: row.original.price,
-        saledId: row.original.saledId
-      }
-
-      const result = await updateSaledProduct(saledProduct)
-
-      if (!result) table.setRowSelection({})
-    })
-  }
-
-  const handleSaveAll = (table: MRT_TableInstance<Saled_Product_Type>) => {
-    const selectedProducts = table.getSelectedRowModel().rows
-    saveAllSelected(selectedProducts)
-  }
-
   const table = useMaterialReactTable({
     columns,
     data: data || [],
@@ -431,79 +240,6 @@ function SaledProducts(): JSX.Element {
       rowsPerPageOptions: [30, data?.length || 50]
     },
     onEditingRowSave: handleUpdateSaledProduct,
-    renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: 'flex', gap: '1rem' }}>
-        <Tooltip
-          title={langFormat({
-            uzb: 'Tahrirlash',
-            ru: 'Редактировать',
-            en: 'Edit'
-          })}
-        >
-          <IconButton onClick={() => table.setEditingRow(row)}>
-            <Edit />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={langFormat({ uzb: 'O`chirish', ru: 'Удалить', en: 'Delete' })}>
-          <IconButton
-            color="error"
-            onClick={async () => {
-              if (
-                !confirm(
-                  langFormat({
-                    uzb: 'O`chirishni istaysizmi?',
-                    ru: 'Удалить?',
-                    en: 'Delete?'
-                  })
-                )
-              )
-                return
-              await deleteSaledProduct(row.original.saledId)
-            }}
-          >
-            <Delete />
-          </IconButton>
-        </Tooltip>
-        <Tooltip
-          title={langFormat({
-            uzb: 'Nusha olish',
-            en: 'Copy',
-            ru: 'Копировать'
-          })}
-        >
-          <IconButton
-            onClick={async () => {
-              const companyName = localStorage.getItem('username')
-              const sale = row.original
-              const text = `
-Do'kon: ${companyName ?? 'BIMUS'}
-              
-Haridor: ${sale.buyers_name}
-Sana: ${new Date(sale.saled_date).toLocaleDateString('uz-UZ', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-              })}
-          
-Mahsulot: ${sale.name}
-Narx: ${sale.saled_price} so'm
-Soni: ${sale.saled_count} ta
-          
-Jami narx: ${sale.saled_price * (1 - sale.discount / 100) * sale.saled_count} so'm
-`
-
-              alert(text)
-              clipboard.writeText(text)
-            }}
-          >
-            <ContentCopy />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    ),
     initialState: {
       pagination: { pageIndex: 0, pageSize: 30 },
       columnVisibility: {
@@ -528,46 +264,16 @@ Jami narx: ${sale.saled_price * (1 - sale.discount / 100) * sale.saled_count} so
     },
     state: {
       isLoading: isFetchingSaledProducts,
-      showAlertBanner: !!resultUpdating || !!resultDeleting,
+      showAlertBanner: !!resultUpdating,
       showColumnFilters: true
     },
     muiSelectAllCheckboxProps: {
       color: 'success'
     },
-    renderTopToolbarCustomActions: ({ table }) => {
-      return (
-        <Box sx={{ display: 'flex', gap: '1rem', justifyContent: 'flex-start', width: '100%' }}>
-          {table.getSelectedRowModel().rows.length > 0 && (
-            <>
-              <Tooltip
-                title={langFormat({
-                  uzb: 'Pul shaklini o`zgartirish',
-                  en: 'Change form of payment',
-                  ru: 'Изменить счет'
-                })}
-              >
-                <IconButton onClick={() => handleChangeSelectedRows(table)}>
-                  <Refresh />
-                </IconButton>
-              </Tooltip>
-              <Tooltip
-                title={langFormat({
-                  uzb: 'Saqlash',
-                  en: 'Save',
-                  ru: 'Сохранить'
-                })}
-              >
-                <IconButton onClick={() => handleSaveAll(table)}>
-                  <CopyAll />
-                </IconButton>
-              </Tooltip>
-            </>
-          )}
-        </Box>
-      )
-    },
+    renderTopToolbarCustomActions: TopToolbarCustomActions,
+    renderRowActions: RowActions,
     renderToolbarAlertBannerContent: () => {
-      return <Typography color="error">{resultUpdating || resultDeleting}</Typography>
+      return <Typography color="error">{resultUpdating}</Typography>
     }
   })
 
