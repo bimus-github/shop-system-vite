@@ -7,10 +7,11 @@ import {
 } from 'material-react-table'
 import { useMemo, useState } from 'react'
 import { Client_Type } from '../../models/types'
-import { Box, IconButton, Tooltip, Typography } from '@mui/material'
-import { Add, Delete, Edit } from '@mui/icons-material'
-import { useAddClient, useDeleteClient, useGetClients } from '../../hooks/client'
+import { IconButton, Typography } from '@mui/material'
+import { Add } from '@mui/icons-material'
+import { useAddClient, useGetClients } from '../../hooks/client'
 import { langFormat } from '../../functions/langFormat'
+import { RowActions } from './RowActions'
 
 function ClientsList(): JSX.Element {
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
@@ -69,7 +70,6 @@ function ClientsList(): JSX.Element {
 
   const { data: resultAdding, mutateAsync: addClient } = useAddClient()
   const { data: resultUpdating, mutateAsync: updateClient } = useAddClient()
-  const { data: resultDeleting, mutateAsync: deleteClient } = useDeleteClient()
 
   const handleAddClient: MRT_TableOptions<Client_Type>['onCreatingRowSave'] = async ({
     values,
@@ -156,33 +156,14 @@ function ClientsList(): JSX.Element {
         <Add fontSize="large" />
       </IconButton>
     ),
-    renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: 'flex', gap: '1rem' }}>
-        <Tooltip
-          title={langFormat({
-            uzb: 'Tahrirlash',
-            ru: 'Редактировать',
-            en: 'Edit'
-          })}
-        >
-          <IconButton onClick={() => table.setEditingRow(row)}>
-            <Edit />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={langFormat({ uzb: 'O`chirish', ru: 'Удалить', en: 'Delete' })}>
-          <IconButton color="error" onClick={async () => await deleteClient(row.original)}>
-            <Delete />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    ),
+    renderRowActions: RowActions,
     state: {
       isLoading: isFetchingClients,
-      showAlertBanner: !!resultAdding || !!resultUpdating || !!resultDeleting,
+      showAlertBanner: !!resultAdding || !!resultUpdating,
       showSkeletons: isFetchingClients
     },
     renderToolbarAlertBannerContent: () => {
-      return <Typography>{resultAdding || resultUpdating || resultDeleting}</Typography>
+      return <Typography>{resultAdding || resultUpdating}</Typography>
     }
   })
   return <MaterialReactTable table={table} />
