@@ -44,12 +44,14 @@ export function useUpdateSaledProduct() {
 }
 
 export function useGetSaledProducts() {
-  return useQuery<Saled_Product_Type[]>({
+  return useQuery<Saled_Product_Type[], Error>({
     queryKey: ['saledProducts'],
     queryFn: async () => {
       const products: Saled_Product_Type[] = await getSaledProducts()
       return products
-    }
+    },
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false
   })
 }
 
