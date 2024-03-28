@@ -300,6 +300,7 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
           fullWidth
           size="small"
           disablePortal
+          value={buyer}
           options={(clients || [])?.map((c) => c.name) || []}
           onInputChange={(_e, newValue) => setBuyer(newValue)}
           tabIndex={3}
