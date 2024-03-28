@@ -1,10 +1,11 @@
 import { CopyAll, Refresh } from '@mui/icons-material'
-import { Box, IconButton, Tooltip } from '@mui/material'
+import { Box, Button, IconButton, Tooltip } from '@mui/material'
 import { langFormat } from '@renderer/functions/langFormat'
 import { saveAllSelected } from '@renderer/functions/saveAllSelected'
 import { useUpdateSaledProduct } from '@renderer/hooks/sale'
 import { SALE_FORM, Saled_Product_Type } from '@renderer/models/types'
 import { MRT_TableInstance } from 'material-react-table'
+import toast from 'react-hot-toast'
 
 type Props = {
   table: MRT_TableInstance<Saled_Product_Type>
@@ -22,17 +23,6 @@ function TopToolbarCustomActions(props: Props): JSX.Element {
   const handleChangeSelectedRows = async (
     table: MRT_TableInstance<Saled_Product_Type>
   ): Promise<void> => {
-    if (
-      !confirm(
-        langFormat({
-          uzb: "Barcha belgilangan qatorni sotuv shaklini o'chirmoqchimisiz?",
-          en: 'Are you sure you want to change sale form of all selected rows?',
-          ru: 'Вы уверены, что хотите изменить форму продажи для всех выбранных строк?'
-        })
-      )
-    )
-      return
-
     table.getSelectedRowModel().rows.forEach(async (row) => {
       const newSaleForm =
         row.original.sale_form === SALE_FORM.CASH
@@ -57,9 +47,36 @@ function TopToolbarCustomActions(props: Props): JSX.Element {
         saledId: row.original.saledId
       }
 
-      const result = await updateSaledProduct(saledProduct)
+      toast((t) => (
+        <Box>
+          <div>
+            {langFormat({
+              uzb: 'Pul shaklini o`zgartirildi',
+              ru: 'Счет изменен',
+              en: 'Form of payment changed'
+            })}
+          </div>
+          <br />
+          <Button onClick={() => toast.dismiss(t.id)}>
+            {langFormat({ uzb: 'Bekor qilish', ru: 'Отмена', en: 'Cancel' })}
+          </Button>
+          <Button
+            color="error"
+            onClick={async () => {
+              toast.dismiss(t.id)
+              const result = await toast.promise(updateSaledProduct(saledProduct), {
+                loading: langFormat({ uzb: 'Saqlanmoqda', ru: 'Сохраняется', en: 'Saving' }),
+                success: langFormat({ uzb: 'Saqlandi', ru: 'Сохранено', en: 'Saved' }),
+                error: langFormat({ uzb: 'Xatolik yuz berdi', ru: 'Ошибка', en: 'Error' })
+              })
 
-      if (!result) table.setRowSelection({})
+              if (!result) table.setRowSelection({})
+            }}
+          >
+            {langFormat({ uzb: 'Saqlash', ru: 'Сохранить', en: 'Save' })}
+          </Button>
+        </Box>
+      ))
     })
   }
   return (
