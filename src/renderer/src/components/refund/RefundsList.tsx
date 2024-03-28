@@ -2,9 +2,10 @@ import { MRT_ColumnDef, MaterialReactTable, useMaterialReactTable } from 'materi
 import { useMemo } from 'react'
 import { Refund_Type } from '../../models/types'
 import { useDeleteRefund, useGetRefunds } from '../../hooks/refunds'
-import { Box, IconButton, Tooltip, Typography } from '@mui/material'
+import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material'
 import { Delete } from '@mui/icons-material'
 import { langFormat } from '../../functions/langFormat'
+import toast from 'react-hot-toast'
 
 function RefundsList(): JSX.Element {
   const columns = useMemo<MRT_ColumnDef<Refund_Type>[]>(
@@ -96,17 +97,39 @@ function RefundsList(): JSX.Element {
           <IconButton
             color="error"
             onClick={() => {
-              if (
-                !confirm(
-                  langFormat({
-                    uzb: 'O`chirishni istaysizmi?',
-                    ru: 'Удалить?',
-                    en: 'Delete?'
-                  })
-                )
-              )
-                return
-              deleteRefund(row.original.id)
+              toast((t) => (
+                <Box>
+                  <div>
+                    {langFormat({
+                      uzb: 'O`chirishni istaysizmi?',
+                      ru: 'Удалить?',
+                      en: 'Delete?'
+                    })}
+                  </div>
+                  <br />
+                  <Button onClick={() => toast.dismiss(t.id)}>
+                    {langFormat({ uzb: 'Bekor qilish', ru: 'Отмена', en: 'Cancel' })}
+                  </Button>
+                  <Button
+                    color="error"
+                    onClick={async () => {
+                      toast.dismiss(t.id)
+
+                      await toast.promise(deleteRefund(row.original.id), {
+                        loading: langFormat({
+                          uzb: 'O`chirilmoqda',
+                          en: 'Deleting',
+                          ru: 'Удаление'
+                        }),
+                        success: langFormat({ uzb: 'O`chirildi', en: 'Deleted', ru: 'Удалено' }),
+                        error: langFormat({ uzb: 'O`chirishda xatolik', en: 'Error', ru: 'Ошибка' })
+                      })
+                    }}
+                  >
+                    {langFormat({ uzb: 'O`chirish', ru: 'Удалить', en: 'Delete' })}
+                  </Button>
+                </Box>
+              ))
             }}
           >
             <Delete />
