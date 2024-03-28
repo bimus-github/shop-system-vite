@@ -8,11 +8,21 @@ import {
 } from 'material-react-table'
 import { useMemo, useState } from 'react'
 import { Shop_Type } from '../../models/types'
-import { Alert, AlertTitle, Box, IconButton, Tooltip, Typography, colors } from '@mui/material'
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  Button,
+  IconButton,
+  Tooltip,
+  Typography,
+  colors
+} from '@mui/material'
 import { Add, Delete, Edit } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { useCreateShop, useDeleteShop, useGetShops, useUpdateShop } from '../../hooks/shop'
 import { langFormat } from '../../functions/langFormat'
+import toast from 'react-hot-toast'
 
 function ShopsList(): JSX.Element {
   const navigate = useNavigate()
@@ -206,17 +216,34 @@ function ShopsList(): JSX.Element {
   }
 
   const handleDeleteShop = async (id: string) => {
-    if (
-      !confirm(
-        langFormat({
-          uzb: 'Haqiqatdan ham o’chirmoqchimisiz?',
-          en: 'Are you sure you want to delete it?',
-          ru: 'Вы уверены, что хотите удалить?'
-        })
-      )
-    )
-      return
-    await deleteProduct(id)
+    toast((t) => (
+      <Box>
+        <div>
+          {langFormat({
+            uzb: 'Haqiqatdan ham o’chirmoqchimisiz?',
+            en: 'Are you sure you want to delete it?',
+            ru: 'Вы уверены, что хотите удалить?'
+          })}
+        </div>
+        <br />
+        <Button onClick={() => toast.dismiss(t.id)}>
+          {langFormat({ uzb: 'Bekor qilish', en: 'Cancel', ru: 'Отмена' })}
+        </Button>
+        <Button
+          color="error"
+          onClick={async () => {
+            toast.dismiss(t.id)
+            await toast.promise(deleteProduct(id), {
+              loading: langFormat({ uzb: 'O`chirilmoqda', en: 'Deleting', ru: 'Удаление' }),
+              success: langFormat({ uzb: 'O`chirildi', en: 'Deleted', ru: 'Удалено' }),
+              error: langFormat({ uzb: 'O`chirishda xatolik', en: 'Error', ru: 'Ошибка' })
+            })
+          }}
+        >
+          {langFormat({ uzb: 'O`chirish', en: 'Delete', ru: 'Удалить' })}
+        </Button>
+      </Box>
+    ))
   }
 
   const table = useMaterialReactTable({
