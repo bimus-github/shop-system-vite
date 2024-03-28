@@ -25,7 +25,8 @@
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
     "electron-updater": "^6.1.7",
-    "mongoose": "^8.2.2"
+    "mongoose": "^8.2.2",
+    "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
