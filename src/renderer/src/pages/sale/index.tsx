@@ -6,6 +6,8 @@ import { useGetRoomProducts, useResetRoom } from '../../hooks/room'
 import { useCreateSaledProduct } from '../../hooks/sale'
 import { Saled_Product_Type, SALE_FORM, Refund_Type } from '../../models/types'
 import { useCreateRefund } from '../../hooks/refunds'
+import toast from 'react-hot-toast'
+import { langFormat } from '@renderer/functions/langFormat'
 
 function Sale(): JSX.Element {
   const [currentPage, setCurrentPage] = useState<number>(1)
@@ -55,6 +57,7 @@ function Sale(): JSX.Element {
 
       await resetRoom()
       await refetch()
+      toast.success(langFormat({ uzb: 'Sotildi', en: 'Sold', ru: 'Продано' }))
     },
     [createSale, resetRoom, refetch]
   )
@@ -92,6 +95,7 @@ function Sale(): JSX.Element {
 
       await resetRoom()
       await refetch()
+      toast.success(langFormat({ uzb: 'Qaytardi', en: 'Returned', ru: 'Возвращено' }))
     },
     [resetRoom, refetch, createRefund]
   )
@@ -99,6 +103,7 @@ function Sale(): JSX.Element {
   useEffect(() => {
     refetch()
   }, [currentPage, refetch])
+
   return (
     <Box
       sx={{
