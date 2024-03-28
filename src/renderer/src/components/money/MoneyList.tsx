@@ -8,9 +8,10 @@ import {
   useMaterialReactTable
 } from 'material-react-table'
 import { useCreateMoney, useDeleteMoney, useGetAllMoney, useUpdateMoney } from '../../hooks/money'
-import { Box, IconButton, Tooltip, Typography } from '@mui/material'
+import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material'
 import { Add, Delete, Edit } from '@mui/icons-material'
 import { langFormat } from '../../functions/langFormat'
+import toast from 'react-hot-toast'
 
 function MoneyList(): JSX.Element {
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
@@ -182,17 +183,38 @@ function MoneyList(): JSX.Element {
           <IconButton
             color="error"
             onClick={async () => {
-              if (
-                !confirm(
-                  langFormat({
-                    uzb: 'O`chirishni istaysizmi?',
-                    ru: 'Удалить?',
-                    en: 'Delete?'
-                  })
-                )
-              )
-                return
-              await deleteMoney(row.original.id)
+              toast((t) => (
+                <Box>
+                  <div>
+                    {langFormat({
+                      uzb: 'O`chirishni istaysizmi?',
+                      ru: 'Удалить?',
+                      en: 'Delete?'
+                    })}
+                  </div>
+                  <br />
+                  <Button onClick={() => toast.dismiss(t.id)}>
+                    {langFormat({ uzb: 'Bekor qilish', ru: 'Отмена', en: 'Cancel' })}
+                  </Button>
+                  <Button
+                    color="error"
+                    onClick={async () => {
+                      toast.dismiss(t.id)
+                      await toast.promise(deleteMoney(row.original.id), {
+                        loading: langFormat({
+                          uzb: 'O`chirilmoqda',
+                          ru: 'Удаление',
+                          en: 'Deleting'
+                        }),
+                        success: langFormat({ uzb: 'O`chirildi', ru: 'Удалено', en: 'Deleted' }),
+                        error: langFormat({ uzb: 'O`chirishda xatolik', ru: 'Ошибка', en: 'Error' })
+                      })
+                    }}
+                  >
+                    {langFormat({ uzb: 'O`chirish', ru: 'Удалить', en: 'Delete' })}
+                  </Button>
+                </Box>
+              ))
             }}
           >
             <Delete />
