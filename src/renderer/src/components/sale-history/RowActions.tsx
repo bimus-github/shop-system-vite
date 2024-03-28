@@ -1,9 +1,10 @@
 import { ContentCopy, Delete, Edit } from '@mui/icons-material'
-import { Box, IconButton, Tooltip } from '@mui/material'
+import { Box, Button, IconButton, Tooltip } from '@mui/material'
 import { langFormat } from '@renderer/functions/langFormat'
 import { useDeleteSaledProduct } from '@renderer/hooks/sale'
 import { Saled_Product_Type } from '@renderer/models/types'
 import { MRT_Cell, MRT_Row, MRT_TableInstance } from 'material-react-table'
+import toast from 'react-hot-toast'
 
 const { clipboard } = window.require('electron')
 
@@ -35,17 +36,34 @@ function RowActions(props: Props): JSX.Element {
         <IconButton
           color="error"
           onClick={async () => {
-            if (
-              !confirm(
-                langFormat({
-                  uzb: 'O`chirishni istaysizmi?',
-                  ru: 'Удалить?',
-                  en: 'Delete?'
-                })
-              )
-            )
-              return
-            await deleteSaledProduct(row.original.saledId)
+            toast((t) => (
+              <Box>
+                <div>
+                  {langFormat({
+                    uzb: 'O`chirishni istaysizmi?',
+                    ru: 'Удалить?',
+                    en: 'Delete?'
+                  })}
+                </div>
+                <br />
+                <Button onClick={() => toast.dismiss(t.id)}>
+                  {langFormat({ uzb: 'Bekor qilish', ru: 'Отмена', en: 'Cancel' })}
+                </Button>
+                <Button
+                  color="error"
+                  onClick={async () => {
+                    toast.dismiss(t.id)
+                    await toast.promise(deleteSaledProduct(row.original.saledId), {
+                      loading: langFormat({ uzb: 'O`chirilmoqda', ru: 'Удаление', en: 'Deleting' }),
+                      success: langFormat({ uzb: 'O`chirildi', ru: 'Удалено', en: 'Deleted' }),
+                      error: langFormat({ uzb: 'O`chirishda xatolik', ru: 'Ошибка', en: 'Error' })
+                    })
+                  }}
+                >
+                  {langFormat({ uzb: 'O`chirish', ru: 'Удалить', en: 'Delete' })}
+                </Button>
+              </Box>
+            ))
           }}
         >
           <Delete />
@@ -82,7 +100,7 @@ Soni: ${sale.saled_count} ta
 Jami narx: ${sale.saled_price * (1 - sale.discount / 100) * sale.saled_count} so'm
 `
 
-            alert(text)
+            toast.success(langFormat({ uzb: 'Nusxalandi', en: 'Copied', ru: 'Скопировано' }))
             clipboard.writeText(text)
           }}
         >
