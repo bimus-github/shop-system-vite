@@ -14,9 +14,10 @@ import {
   useDeleteProductFromStorage,
   useUpdateProductInStorage
 } from '../../hooks/storage'
-import { Box, IconButton, Tooltip, Typography } from '@mui/material'
+import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material'
 import { Add, Delete, Edit } from '@mui/icons-material'
 import { langFormat } from '../../functions/langFormat'
+import toast from 'react-hot-toast'
 
 function ProductsList(): JSX.Element {
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
@@ -150,8 +151,34 @@ function ProductsList(): JSX.Element {
   )
 
   const handleDeleteProduct = async (id: string) => {
-    if (!confirm("O'chirishni xoxlaysizmi?")) return
-    await deleteProduct(id)
+    toast((t) => (
+      <Box>
+        <div>
+          {langFormat({
+            uzb: 'Haqiqatdan ham o`chirmoqchimisiz?',
+            en: 'Are you sure you want to delete it?',
+            ru: 'Вы уверены, что хотите удалить?'
+          })}
+        </div>
+        <br />
+        <Button onClick={() => toast.dismiss(t.id)}>
+          {langFormat({ uzb: 'Bekor qilish', en: 'Cancel', ru: 'Отмена' })}
+        </Button>
+        <Button
+          color="error"
+          onClick={async () => {
+            toast.dismiss(t.id)
+            await toast.promise(deleteProduct(id), {
+              loading: langFormat({ uzb: 'O`chirilmoqda', en: 'Deleting', ru: 'Удаление' }),
+              success: langFormat({ uzb: 'O`chirildi', en: 'Deleted', ru: 'Удалено' }),
+              error: langFormat({ uzb: 'O`chirishda xatolik', en: 'Error', ru: 'Ошибка' })
+            })
+          }}
+        >
+          {langFormat({ uzb: 'O`chirish', en: 'Delete', ru: 'Удалить' })}
+        </Button>
+      </Box>
+    ))
   }
 
   const handleCreateProduct: MRT_TableOptions<Product_Type>['onCreatingRowSave'] = async ({
