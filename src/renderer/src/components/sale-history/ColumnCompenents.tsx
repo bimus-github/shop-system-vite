@@ -1,11 +1,20 @@
 import { Refresh } from '@mui/icons-material'
-import { Autocomplete, Box, IconButton, TextField, Tooltip, Typography } from '@mui/material'
+import {
+  Autocomplete,
+  Box,
+  Button,
+  IconButton,
+  TextField,
+  Tooltip,
+  Typography
+} from '@mui/material'
 import { langFormat } from '@renderer/functions/langFormat'
 import { useGetClients } from '@renderer/hooks/client'
 import { useUpdateSaledProduct } from '@renderer/hooks/sale'
 import { SALE_FORM, Saled_Product_Type } from '@renderer/models/types'
 import { MRT_Cell, MRT_Column, MRT_Header, MRT_Row, MRT_TableInstance } from 'material-react-table'
 import { useMemo } from 'react'
+import toast from 'react-hot-toast'
 
 type FilterByProps = {
   column: MRT_Column<Saled_Product_Type, unknown>
@@ -104,17 +113,6 @@ export function SalefFromCell(props: SalefFromCell): JSX.Element {
       >
         <IconButton
           onClick={() => {
-            if (
-              !confirm(
-                langFormat({
-                  uzb: 'O`zgartirishni istaysizmi?',
-                  ru: 'Изменить?',
-                  en: 'Change?'
-                })
-              )
-            )
-              return
-
             const newSaleForm =
               data.sale_form === SALE_FORM.CASH
                 ? SALE_FORM.CARD
@@ -138,9 +136,51 @@ export function SalefFromCell(props: SalefFromCell): JSX.Element {
               saledId: data.saledId
             }
 
-            updateSaledProduct(saledProduct).then((result) => {
-              alert(result || 'success')
-            })
+            toast((t) => (
+              <Box>
+                <div>
+                  {langFormat({
+                    uzb: 'Pul shaklini o`zgartirishni istaysizmi?',
+                    ru: 'Изменить счет?',
+                    en: 'Change form of payment?'
+                  })}
+                </div>
+                <br />
+                <Button onClick={() => toast.dismiss(t.id)}>
+                  {langFormat({ uzb: 'Bekor qilish', ru: 'Отмена', en: 'Cancel' })}
+                </Button>
+                <Button
+                  color="error"
+                  onClick={async () => {
+                    toast.dismiss(t.id)
+                    await toast.promise(
+                      updateSaledProduct(saledProduct).then((result) => {
+                        result && toast.success(result)
+                      }),
+                      {
+                        loading: langFormat({
+                          uzb: 'Pul shaklini o`zgartirish...',
+                          ru: 'Изменение счета...',
+                          en: 'Changing form of payment...'
+                        }),
+                        success: langFormat({
+                          uzb: 'Pul shaklini o`zgartirildi',
+                          ru: 'Изменение счета завершено',
+                          en: 'Form of payment changed successfully'
+                        }),
+                        error: langFormat({
+                          uzb: 'Pul shaklini o`zgartirishda xatolik yuz berdi',
+                          ru: 'Изменение счета произошла ошибка',
+                          en: 'Error while changing form of payment'
+                        })
+                      }
+                    )
+                  }}
+                >
+                  {langFormat({ uzb: 'Ha', ru: 'Да', en: 'Yes' })}
+                </Button>
+              </Box>
+            ))
           }}
         >
           <Refresh />
