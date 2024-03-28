@@ -6,6 +6,7 @@ import { theme } from './theme'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { Toaster } from 'react-hot-toast'
 
 const queryClient = new QueryClient()
 
@@ -33,6 +34,7 @@ function App(): JSX.Element {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <ThemeProvider theme={theme({ mode, fontSize, fontFamily })}>
           <RouterProvider router={rootRouter} />
+          <Toaster />
         </ThemeProvider>
       </LocalizationProvider>
     </QueryClientProvider>
