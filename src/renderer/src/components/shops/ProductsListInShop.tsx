@@ -14,6 +14,7 @@ import {
   AlertTitle,
   Autocomplete,
   Box,
+  Button,
   IconButton,
   TextField,
   Tooltip,
@@ -29,6 +30,7 @@ import {
 } from '../../hooks/productsInShop'
 import { useGetProductsInStorage } from '../../hooks/storage'
 import { langFormat } from '../../functions/langFormat'
+import toast from 'react-hot-toast'
 
 function ProductsListInShop(): JSX.Element {
   const navigate = useNavigate()
@@ -356,17 +358,38 @@ function ProductsListInShop(): JSX.Element {
           <IconButton
             color="error"
             onClick={async () => {
-              if (
-                !confirm(
-                  langFormat({
-                    uzb: 'Rostan ham o`chirmoqchimisiz?',
-                    en: 'Are you sure you want to delete it?',
-                    ru: 'Вы уверены, что хотите удалить?'
-                  })
-                )
-              )
-                return
-              await deleteProduct(row.original.id)
+              toast((t) => (
+                <Box>
+                  <div>
+                    {langFormat({
+                      uzb: 'Rostan ham o`chirmoqchimisiz?',
+                      en: 'Are you sure you want to delete it?',
+                      ru: 'Вы уверены, что хотите удалить?'
+                    })}
+                  </div>
+                  <br />
+                  <Button onClick={() => toast.dismiss(t.id)}>
+                    {langFormat({ uzb: 'Bekor qilish', en: 'Cancel', ru: 'Отмена' })}
+                  </Button>
+                  <Button
+                    color="error"
+                    onClick={async () => {
+                      toast.dismiss(t.id)
+                      await toast.promise(deleteProduct(row.original.id), {
+                        loading: langFormat({ uzb: 'Yuklanmoqda', en: 'Loading', ru: 'Загрузка' }),
+                        success: langFormat({ uzb: 'O`chirildi', en: 'Deleted', ru: 'Удалено' }),
+                        error: langFormat({
+                          uzb: 'Xatolik yuz berdi',
+                          en: 'Error',
+                          ru: 'Произошла ошибка'
+                        })
+                      })
+                    }}
+                  >
+                    {langFormat({ uzb: 'O`chirish', en: 'Delete', ru: 'Удалить' })}
+                  </Button>
+                </Box>
+              ))
             }}
           >
             <Delete />
