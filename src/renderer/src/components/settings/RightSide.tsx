@@ -26,6 +26,7 @@ import { useGetProductsInStorage } from '../../hooks/storage'
 import { useGetRefunds } from '../../hooks/refunds'
 import { useGetShops } from '../../hooks/shop'
 import { useGetSaledProducts } from '../../hooks/sale'
+import toast from 'react-hot-toast'
 
 function RightSide(): JSX.Element {
   const { refetch: refetchMoney } = useGetAllMoney()
@@ -178,7 +179,7 @@ function RightSide(): JSX.Element {
     }
 
     setIsDownloading(false)
-    alert(
+    toast.success(
       langFormat({
         uzb: "Ma'lumot saqlandi",
         en: 'Data saved',
@@ -251,17 +252,46 @@ function RightSide(): JSX.Element {
                 <Tooltip title="Yuklash">
                   <IconButton
                     onClick={async () => {
-                      if (
-                        !confirm(
-                          langFormat({
-                            uzb: "Bu ma'lumotlarni saqlaysizmi?",
-                            en: 'Do you want to download this data?',
-                            ru: 'Вы хотите скачать эти данные?'
-                          })
-                        )
-                      )
-                        return
-                      await downloadDataFromDatabase(data)
+                      toast((t) => (
+                        <Box>
+                          <div>
+                            {langFormat({
+                              uzb: "Bu ma'lumotlarni saqlaysizmi?",
+                              en: 'Do you want to download this data?',
+                              ru: 'Вы хотите скачать эти данные?'
+                            })}
+                          </div>
+                          <br />
+                          <Button onClick={() => toast.dismiss(t.id)}>
+                            {langFormat({ uzb: 'Bekor qilish', en: 'Cancel', ru: 'Отмена' })}
+                          </Button>
+                          <Button
+                            color="error"
+                            onClick={async () => {
+                              toast.dismiss(t.id)
+                              await toast.promise(downloadDataFromDatabase(data), {
+                                loading: langFormat({
+                                  uzb: 'Yuklanmoqda',
+                                  en: 'Downloading',
+                                  ru: 'Загрузка'
+                                }),
+                                success: langFormat({
+                                  uzb: 'Yuklandi',
+                                  en: 'Downloaded',
+                                  ru: 'Скачано'
+                                }),
+                                error: langFormat({
+                                  uzb: 'Yuklashda xatolik',
+                                  en: 'Download error',
+                                  ru: 'Ошибка загрузки'
+                                })
+                              })
+                            }}
+                          >
+                            {langFormat({ uzb: 'Yuklash', en: 'Download', ru: 'Скачать' })}
+                          </Button>
+                        </Box>
+                      ))
                     }}
                   >
                     <Save color="action" />
