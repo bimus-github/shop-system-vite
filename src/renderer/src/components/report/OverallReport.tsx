@@ -52,16 +52,19 @@ const Body = (): JSX.Element => {
   const { data: refunds } = useGetRefunds()
 
   const putMoney = useMemo(
-    () => money?.filter((m) => m.reason === MONEY_REASON.PUT)?.reduce((a, b) => a + b.value, 0),
+    () =>
+      money?.filter((m) => m.reason === MONEY_REASON.PUT)?.reduce((a, b) => a + b.value, 0) || 0,
     [money]
   )
   const takenMoney = useMemo(
-    () => money?.filter((m) => m.reason === MONEY_REASON.TAKE)?.reduce((a, b) => a + b.value, 0),
+    () =>
+      money?.filter((m) => m.reason === MONEY_REASON.TAKE)?.reduce((a, b) => a + b.value, 0) || 0,
     [money]
   )
-  const myLoans = useMemo(() => shops?.reduce((a, b) => a + b.loan_price, 0), [shops])
+  const myLoans = useMemo(() => shops?.reduce((a, b) => a + b.loan_price, 0) || 0, [shops])
   const recived = useMemo(
-    () => shops?.reduce((a, b) => a + b?.products.reduce((x, y) => x + y.count * y.cost, 0), 0),
+    () =>
+      shops?.reduce((a, b) => a + b?.products.reduce((x, y) => x + y.count * y.cost, 0), 0) || 0,
     [shops]
   )
   const earned = useMemo(
@@ -69,47 +72,42 @@ const Body = (): JSX.Element => {
       saledProducts?.reduce(
         (a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100),
         0
-      ),
+      ) || 0,
     [saledProducts]
   )
-  const refunded = useMemo(() => refunds?.reduce((a, b) => a + b.count * b.price, 0), [refunds])
+  const refunded = useMemo(
+    () => refunds?.reduce((a, b) => a + b.count * b.price, 0) || 0,
+    [refunds]
+  )
   const loans = useMemo(
     () =>
       saledProducts
         ?.filter((p) => p.sale_form === SALE_FORM.LOAN)
-        ?.reduce((a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100), 0),
+        ?.reduce((a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100), 0) || 0,
     [saledProducts]
   )
 
   return (
     <TableRow>
       <TableCell>
-        {putMoney?.toLocaleString() || 0} {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
-      </TableCell>
-      <TableCell>
-        {takenMoney?.toLocaleString() || 0} {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
-      </TableCell>
-      <TableCell>
-        {(putMoney &&
-          takenMoney &&
-          myLoans &&
-          loans &&
-          recived &&
-          refunded &&
-          earned &&
-          (putMoney - takenMoney + myLoans - (recived - refunded) + earned)?.toLocaleString()) ||
-          0}{' '}
+        {putMoney?.toLocaleString('ru-RU', { maximumFractionDigits: 0 }) || 0}{' '}
         {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
       </TableCell>
       <TableCell>
-        {(putMoney &&
-          takenMoney &&
-          loans &&
-          recived &&
-          refunded &&
-          earned &&
-          (putMoney + earned - takenMoney - loans - (recived - refunded))?.toLocaleString()) ||
-          0}{' '}
+        {takenMoney?.toLocaleString('ru-RU', { maximumFractionDigits: 0 }) || 0}{' '}
+        {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
+      </TableCell>
+      <TableCell>
+        {(putMoney - takenMoney + myLoans - (recived - refunded) + earned)?.toLocaleString(
+          'ru-RU',
+          { maximumFractionDigits: 0 }
+        ) || 0}{' '}
+        {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
+      </TableCell>
+      <TableCell>
+        {(putMoney + earned - takenMoney - loans - (recived - refunded))?.toLocaleString('ru-RU', {
+          maximumFractionDigits: 0
+        }) || 0}{' '}
         {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
       </TableCell>
     </TableRow>
