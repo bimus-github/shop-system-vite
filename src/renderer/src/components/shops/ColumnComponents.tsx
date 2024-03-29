@@ -4,6 +4,7 @@ import { langFormat } from '@renderer/functions/langFormat'
 import { useGetProductsInStorage } from '@renderer/hooks/storage'
 import { Product_Type } from '@renderer/models/types'
 import { MRT_Cell, MRT_Column, MRT_Row, MRT_TableInstance } from 'material-react-table'
+import search from 'search-in-js'
 
 interface EditByProps {
   cell: MRT_Cell<Product_Type, unknown>
@@ -24,8 +25,32 @@ export const EditName = ({
   const { data: productsInStorage } = useGetProductsInStorage()
   return (
     <Autocomplete
-      options={productsInStorage?.map((p: Product_Type) => p.name) || []}
-      defaultValue={original.name || ''}
+      options={productsInStorage || []}
+      filterOptions={(options, { inputValue }) =>
+        search(inputValue, options, ['name', 'barcode'], 'starts-with-no-space')
+      }
+      noOptionsText={langFormat({
+        uzb: 'Mahsulot topilmadi',
+        ru: 'Продукт не найден',
+        en: 'Product not found'
+      })}
+      getOptionLabel={(option) => option?.name + '/' + option?.barcode}
+      defaultValue={original || ''}
+      onChange={(_event, newValue) => {
+        if (newValue) {
+          delete validationErrors.name
+          setValidationErrors(validationErrors)
+
+          setSelectedProduct(newValue)
+        } else {
+          validationErrors.name = langFormat({
+            uzb: 'Mahsulot nomi',
+            ru: 'Название продукта',
+            en: 'Product name'
+          })
+          setValidationErrors(validationErrors)
+        }
+      }}
       onInputChange={(_event, newValue) => {
         if (newValue) {
           delete validationErrors.name
@@ -50,6 +75,7 @@ export const EditName = ({
       renderInput={(params) => (
         <TextField
           {...params}
+          autoFocus={true}
           label={langFormat({
             uzb: 'Mahsulot nomi',
             ru: 'Название продукта',
