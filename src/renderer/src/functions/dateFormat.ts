@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 export const dateFormat = (date: number) => {
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString('ru-RU', {
     year: '2-digit',
     month: '2-digit',
     day: '2-digit',
