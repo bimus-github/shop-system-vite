@@ -36,6 +36,7 @@ function SaledProducts(): JSX.Element {
     () => [
       {
         accessorKey: 'buyers_name',
+        filterFn: 'arrIncludes',
         header: langFormat({
           uzb: 'Xaridor',
           ru: 'Покупатель',
@@ -261,7 +262,6 @@ function SaledProducts(): JSX.Element {
       color: 'success'
     },
     muiSearchTextFieldProps: {
-      autoFocus: true,
       placeholder: langFormat({
         uzb: 'Qidirish',
         en: 'Search',
