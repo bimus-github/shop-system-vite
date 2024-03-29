@@ -132,8 +132,9 @@ const CustomTtitle = ({
           ru: 'от ...'
         })}
         value={start}
+        format="MM/DD/YYYY"
         onChange={(newStart) => {
-          newStart && localStorage.setItem('start-sale', newStart.format('DD/MM/YYYY'))
+          newStart && localStorage.setItem('start-sale', newStart.format('MM/DD/YYYY'))
           setStart(newStart)
         }}
         sx={{ mr: 1, width: '200px' }}
@@ -145,8 +146,9 @@ const CustomTtitle = ({
           ru: 'до ...'
         })}
         value={end}
+        format="MM/DD/YYYY"
         onChange={(newEnd) => {
-          newEnd && localStorage.setItem('end-sale', newEnd.format('DD/MM/YYYY'))
+          newEnd && localStorage.setItem('end-sale', newEnd.format('MM/DD/YYYY'))
           setEnd(newEnd)
         }}
         sx={{ mr: 1, width: '200px' }}
