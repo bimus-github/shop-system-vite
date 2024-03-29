@@ -4,6 +4,7 @@ import { Product_Type, SALE_FORM, Saled_Product_Type } from '../../models/types'
 import ProductModel from '../schemas/productModel'
 import SaledProductModel from '../schemas/saledModel'
 import { addToStock } from './product'
+import fs from 'fs'
 
 export const getSaledProducts = async () => {
   try {
@@ -75,34 +76,41 @@ export const deleteSaledProduct = async (saledId: string) => {
   }
 }
 
-// export const addAllSaledProducts = async () => {
-//   try {
-//     SaledProductModel.insertMany(
-//       sales.map(
-//         (product) =>
-//           ({
-//             id: product.id,
-//             name: product.name,
-//             barcode: product.code,
-//             count: product.count,
-//             buyers_name: product.buyer,
-//             price: product.salePrice,
-//             cost: product.commingPrice,
-//             saled_date: product.saledDate,
-//             discount: product.discount,
-//             sale_form:
-//               product.status === 'cash'
-//                 ? SALE_FORM.CASH
-//                 : product.status === 'loan'
-//                   ? SALE_FORM.LOAN
-//                   : SALE_FORM.CARD,
-//             saledId: product.saledId,
-//             saled_count: product.quantity,
-//             saled_price: product.saledDate
-//           }) as Saled_Product_Type
-//       )
-//     )
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
+export const addAllSaledProducts = async () => {
+  try {
+    const res = fs.readFileSync(
+      '/Users/sardorbekaminjonov/Madaminjon/electron apps/shop-system-mdb-vite/data/data.json',
+      'utf-8'
+    )
+
+    const sales = JSON.parse(res).sales
+
+    const newSales = sales.map(
+      (p) =>
+        ({
+          barcode: p.code,
+          name: p.name,
+          cost: p.commingPrice,
+          count: p.count,
+          id: p.id,
+          price: p.salePrice,
+          buyers_name: p.buyer,
+          discount: p.discount,
+          sale_form:
+            p.status === 'cash'
+              ? SALE_FORM.CASH
+              : p.status === 'loan'
+                ? SALE_FORM.LOAN
+                : SALE_FORM.CARD,
+          saled_count: p.quantity,
+          saled_date: p.saledDate,
+          saled_price: p.saledPrice,
+          saledId: p.saledId
+        }) as Saled_Product_Type
+    )
+
+    await SaledProductModel.insertMany(newSales)
+  } catch (error) {
+    console.log(error)
+  }
+}
