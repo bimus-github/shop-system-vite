@@ -14,7 +14,7 @@ Mahsulotlar:
 ${rowsByBuer
   .map(
     (row) =>
-      `${row.original.name} - ${row.original.saled_count} ta - ${row.original.saled_price} sum donaga - ${row.original.discount}% chegirma - ${row.original.sale_form} - ${dateFormat(
+      `${row.original.name} - ${row.original.saled_count} ta - ${row.original.saled_price} sum donaga - ${row.original.discount ? row.original.discount + '% chegirma -' : ''}${row.original.sale_form} - ${dateFormat(
         row.original.saled_date
       )}\n`
   )
@@ -28,13 +28,15 @@ Jami summa: ${rowsByBuer.reduce(
 `
 )}
 ${
-  Object.values(seperatedRows).length > 1 &&
-  `
+  Object.values(seperatedRows).length >= 2
+    ? `
 Jami summa: ${rows.reduce(
-    (sum, row) =>
-      sum + row.original.saled_price * row.original.saled_count * (1 - row.original.discount / 100),
-    0
-  )}`
+        (sum, row) =>
+          sum +
+          row.original.saled_price * row.original.saled_count * (1 - row.original.discount / 100),
+        0
+      )}`
+    : ''
 }
 
 
