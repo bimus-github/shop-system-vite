@@ -18,51 +18,51 @@ function TopToolbarCustomActions(props: Props): JSX.Element {
   const handleSaveAll = (table: MRT_TableInstance<Saled_Product_Type>): void => {
     const selectedProducts = table.getSelectedRowModel().rows
     saveAllSelected(selectedProducts)
+    toast.success(langFormat({ uzb: 'Saqlandi', ru: 'Сохранено', en: 'Saved' }))
   }
 
   const handleChangeSelectedRows = async (
     table: MRT_TableInstance<Saled_Product_Type>
   ): Promise<void> => {
-    table.getSelectedRowModel().rows.forEach(async (row) => {
-      const newSaleForm =
-        row.original.sale_form === SALE_FORM.CASH
-          ? SALE_FORM.CARD
-          : row.original.sale_form === SALE_FORM.LOAN
-            ? SALE_FORM.CASH
-            : SALE_FORM.LOAN
+    toast((t) => (
+      <Box>
+        <div>
+          {langFormat({
+            uzb: 'Pul shaklini o`zgartirildi',
+            ru: 'Счет изменен',
+            en: 'Form of payment changed'
+          })}
+        </div>
+        <br />
+        <Button onClick={() => toast.dismiss(t.id)}>
+          {langFormat({ uzb: 'Bekor qilish', ru: 'Отмена', en: 'Cancel' })}
+        </Button>
+        <Button
+          color="error"
+          onClick={async () => {
+            table.getSelectedRowModel().rows.forEach(async (row) => {
+              const newSaleForm =
+                row.original.sale_form === SALE_FORM.CASH
+                  ? SALE_FORM.CARD
+                  : row.original.sale_form === SALE_FORM.LOAN
+                    ? SALE_FORM.CASH
+                    : SALE_FORM.LOAN
 
-      const saledProduct: Saled_Product_Type = {
-        id: row.original.id,
-        name: row.original.name,
-        barcode: row.original.barcode,
-        saled_count: row.original.saled_count,
-        cost: row.original.cost,
-        saled_price: row.original.saled_price,
-        sale_form: newSaleForm,
-        buyers_name: row.original.buyers_name,
-        discount: row.original.discount,
-        saled_date: row.original.saled_date,
-        count: row.original.count,
-        price: row.original.price,
-        saledId: row.original.saledId
-      }
-
-      toast((t) => (
-        <Box>
-          <div>
-            {langFormat({
-              uzb: 'Pul shaklini o`zgartirildi',
-              ru: 'Счет изменен',
-              en: 'Form of payment changed'
-            })}
-          </div>
-          <br />
-          <Button onClick={() => toast.dismiss(t.id)}>
-            {langFormat({ uzb: 'Bekor qilish', ru: 'Отмена', en: 'Cancel' })}
-          </Button>
-          <Button
-            color="error"
-            onClick={async () => {
+              const saledProduct: Saled_Product_Type = {
+                id: row.original.id,
+                name: row.original.name,
+                barcode: row.original.barcode,
+                saled_count: row.original.saled_count,
+                cost: row.original.cost,
+                saled_price: row.original.saled_price,
+                sale_form: newSaleForm,
+                buyers_name: row.original.buyers_name,
+                discount: row.original.discount,
+                saled_date: row.original.saled_date,
+                count: row.original.count,
+                price: row.original.price,
+                saledId: row.original.saledId
+              }
               toast.dismiss(t.id)
               const result = await toast.promise(updateSaledProduct(saledProduct), {
                 loading: langFormat({ uzb: 'Saqlanmoqda', ru: 'Сохраняется', en: 'Saving' }),
@@ -71,13 +71,13 @@ function TopToolbarCustomActions(props: Props): JSX.Element {
               })
 
               if (!result) table.setRowSelection({})
-            }}
-          >
-            {langFormat({ uzb: 'Saqlash', ru: 'Сохранить', en: 'Save' })}
-          </Button>
-        </Box>
-      ))
-    })
+            })
+          }}
+        >
+          {langFormat({ uzb: 'Saqlash', ru: 'Сохранить', en: 'Save' })}
+        </Button>
+      </Box>
+    ))
   }
   return (
     <Box sx={{ display: 'flex', gap: '1rem', justifyContent: 'flex-start', width: '100%' }}>
