@@ -49,7 +49,9 @@ function ShopsList(): JSX.Element {
       },
       {
         accessorKey: 'loan_price',
+        accessorFn: (row) => row?.loan_price.toLocaleString('ru-RU', { maximumFractionDigits: 0 }),
         header: langFormat({ uzb: 'Qarzim', en: 'My Loan', ru: 'Задолженность' }),
+
         enableEditing: true,
         muiEditTextFieldProps: {
           variant: 'standard',
@@ -66,12 +68,15 @@ function ShopsList(): JSX.Element {
             {table
               .getFilteredRowModel()
               .rows?.reduce((a, b) => a + b.original.loan_price, 0)
-              .toLocaleString()}
+              .toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
           </Typography>
         )
       },
       {
-        accessorFn: (row) => row?.products?.reduce((a, b) => a + b.count * b.cost, 0) || 0,
+        accessorFn: (row) =>
+          row?.products
+            ?.reduce((a, b) => a + b.count * b.cost, 0)
+            .toLocaleString('ru-RU', { maximumFractionDigits: 0 }) || 0,
         header: langFormat({ uzb: 'Kelish Narxi', en: 'Cost', ru: 'Приход' }),
         enableEditing: false,
         Footer: ({ table }) => (
@@ -82,14 +87,15 @@ function ShopsList(): JSX.Element {
                 (a, b) => a + b.original?.products?.reduce((x, y) => x + y.count * y.cost, 0),
                 0
               )
-              .toLocaleString()}
+              .toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
           </Typography>
         )
       },
       {
         accessorFn: (row) =>
-          row?.products?.reduce((a, b) => a + b.count * (b.price - b.cost), 0).toLocaleString() ||
-          0,
+          row?.products
+            ?.reduce((a, b) => a + b.count * (b.price - b.cost), 0)
+            .toLocaleString('ru-RU', { maximumFractionDigits: 0 }) || 0,
         header: langFormat({ uzb: 'Foyda', en: 'Profit', ru: 'Прибыль' }),
         enableEditing: false,
         Footer: ({ table }) => (
@@ -101,7 +107,7 @@ function ShopsList(): JSX.Element {
                   a + b.original?.products?.reduce((x, y) => x + y.count * (y.price - y.cost), 0),
                 0
               )
-              .toLocaleString()}
+              .toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
           </Typography>
         )
       },
