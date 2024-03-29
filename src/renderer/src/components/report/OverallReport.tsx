@@ -7,6 +7,7 @@ import { MONEY_REASON, SALE_FORM } from '../../models/types'
 import { useGetRefunds } from '../../hooks/refunds'
 import { langFormat } from '../../functions/langFormat'
 import { useMemo } from 'react'
+import { useGetProductsInStorage } from '@renderer/hooks/storage'
 
 const Head = (): JSX.Element => (
   <TableRow sx={{ bgcolor: 'primary.main', color: 'white' }}>
@@ -18,7 +19,7 @@ const Head = (): JSX.Element => (
           en: 'Total put'
         })}
       >
-        <>{langFormat({ uzb: 'Tikilgan', ru: 'Выдан', en: 'Taken' })}</>
+        <>{langFormat({ uzb: 'Tikilgan', ru: 'Выдан', en: 'Put' })}</>
       </Tooltip>
     </TableCell>
     <TableCell sx={{ fontWeight: 'bold' }}>
@@ -50,6 +51,7 @@ const Body = (): JSX.Element => {
   const { data: money } = useGetAllMoney()
   const { data: saledProducts } = useGetSaledProducts()
   const { data: refunds } = useGetRefunds()
+  const { data: productsInStorage } = useGetProductsInStorage()
 
   const putMoney = useMemo(
     () =>
@@ -86,6 +88,10 @@ const Body = (): JSX.Element => {
         ?.reduce((a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100), 0) || 0,
     [saledProducts]
   )
+  const storage = useMemo(
+    () => productsInStorage?.reduce((a, b) => a + b.count * b.price, 0) || 0,
+    [productsInStorage]
+  )
 
   return (
     <TableRow>
@@ -98,16 +104,19 @@ const Body = (): JSX.Element => {
         {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
       </TableCell>
       <TableCell>
-        {(putMoney - takenMoney + myLoans - (recived - refunded) + earned)?.toLocaleString(
+        {(putMoney - takenMoney + myLoans - (storage - refunded) + earned)?.toLocaleString(
           'ru-RU',
           { maximumFractionDigits: 0 }
         ) || 0}{' '}
         {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
       </TableCell>
       <TableCell>
-        {(putMoney + earned - takenMoney - loans - (recived - refunded))?.toLocaleString('ru-RU', {
-          maximumFractionDigits: 0
-        }) || 0}{' '}
+        {(putMoney + earned - takenMoney - loans + myLoans - (recived - refunded))?.toLocaleString(
+          'ru-RU',
+          {
+            maximumFractionDigits: 0
+          }
+        ) || 0}{' '}
         {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
       </TableCell>
     </TableRow>
