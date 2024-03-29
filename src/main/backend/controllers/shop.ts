@@ -3,6 +3,7 @@ import { Message_Forms } from '../../models/message'
 import { Product_Type, Shop_Type } from '../../models/types'
 import ShopModel from '../schemas/shopModel'
 import { addToStock, deleteFromStok, updateToStok } from './product'
+import fs from 'fs'
 
 export const createShop = async (shop: Shop_Type) => {
   try {
@@ -169,5 +170,50 @@ export const getProductsInShop = async (shopId: string) => {
   } catch (error) {
     console.log(error)
     return []
+  }
+}
+
+export const addAllShop = async () => {
+  try {
+    const res = fs.readdirSync(
+      '/Users/sardorbekaminjonov/Madaminjon/electron apps/shop-system-mdb-vite/data',
+      {
+        withFileTypes: true
+      }
+    )
+
+    res.forEach(async (file) => {
+      if (file.isFile()) {
+        const res = fs.readFileSync(
+          `/Users/sardorbekaminjonov/Madaminjon/electron apps/shop-system-mdb-vite/data/${file.name}`,
+          'utf-8'
+        )
+
+        const shop = JSON.parse(res).shop
+
+        const newShop: Shop_Type = {
+          id: shop.id,
+          name: shop.name,
+          date: shop.date,
+          loan_price: 0,
+          phone: shop.tel,
+          products: shop.products.map(
+            (p) =>
+              ({
+                barcode: p.code,
+                name: p.name,
+                cost: p.commingPrice,
+                count: p.count,
+                id: p.id,
+                price: p.salePrice
+              }) as Product_Type
+          )
+        }
+
+        await ShopModel.create(newShop)
+      }
+    })
+  } catch (error) {
+    console.log(error)
   }
 }
