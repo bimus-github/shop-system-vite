@@ -81,21 +81,26 @@ const Body = () => {
   )
   return (
     <TableRow>
-      <TableCell>{count}</TableCell>
+      <TableCell>{count.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}</TableCell>
       <TableCell>
-        {totalProducts} {langFormat({ uzb: 'ta', en: '', ru: '' })}
+        {totalProducts.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}{' '}
+        {langFormat({ uzb: 'ta', en: '', ru: '' })}
       </TableCell>
       <TableCell>
-        {totalLoan} {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
+        {totalLoan.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}{' '}
+        {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
       </TableCell>
       <TableCell>
-        {totalCommingCost} {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
+        {totalCommingCost.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}{' '}
+        {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
       </TableCell>
       <TableCell>
-        {totalSellingCost} {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
+        {totalSellingCost.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}{' '}
+        {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
       </TableCell>
       <TableCell>
-        {totalProfit} {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
+        {totalProfit.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}{' '}
+        {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
       </TableCell>
     </TableRow>
   )
