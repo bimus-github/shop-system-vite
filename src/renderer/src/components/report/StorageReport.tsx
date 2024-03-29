@@ -58,15 +58,16 @@ const Body = () => {
         {count} {langFormat({ uzb: 'ta', en: '', ru: '' })}
       </TableCell>
       <TableCell>
-        {totalCommingCost.toLocaleString() || 0}{' '}
+        {totalCommingCost.toLocaleString('ru-RU', { maximumFractionDigits: 0 }) || 0}{' '}
         {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
       </TableCell>
       <TableCell>
-        {totalSellingCost.toLocaleString() || 0}{' '}
+        {totalSellingCost.toLocaleString('ru-RU', { maximumFractionDigits: 0 }) || 0}{' '}
         {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
       </TableCell>
       <TableCell>
-        {totalProfit.toLocaleString() || 0} {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
+        {totalProfit.toLocaleString('ru-RU', { maximumFractionDigits: 0 }) || 0}{' '}
+        {langFormat({ uzb: "so'm", en: "so'm", ru: 'сум' })}
       </TableCell>
     </TableRow>
   )
