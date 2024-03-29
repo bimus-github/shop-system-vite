@@ -57,7 +57,36 @@ function ProductsListInShop(): JSX.Element {
         )
       },
       {
+        accessorKey: 'count',
+        size: 100,
+        header: langFormat({
+          uzb: 'Soni',
+          ru: 'Количество',
+          en: 'Count'
+        }),
+        enableEditing: true,
+        muiEditTextFieldProps: {
+          required: true,
+          variant: 'standard',
+          error: !!validationErrors.count,
+          helperText: validationErrors.count || selectedProduct?.count,
+          onFocus: () => {
+            delete validationErrors.count
+            setValidationErrors(validationErrors)
+          }
+        },
+        Footer: ({ table }) => (
+          <Typography fontWeight={'bold'}>
+            {table
+              .getFilteredRowModel()
+              .rows?.reduce((a, b) => a + b.original.count, 0)
+              .toLocaleString()}
+          </Typography>
+        )
+      },
+      {
         accessorKey: 'cost',
+        accessorFn: (row) => row?.cost.toLocaleString('ru-RU', { maximumFractionDigits: 0 }),
         header: langFormat({
           uzb: 'Kelish narxi',
           ru: 'Цена покупки',
@@ -86,6 +115,7 @@ function ProductsListInShop(): JSX.Element {
       },
       {
         accessorKey: 'price',
+        accessorFn: (row) => row?.price.toLocaleString('ru-RU', { maximumFractionDigits: 0 }),
         header: langFormat({
           uzb: 'Sotish narxi',
           ru: 'Цена продажи',
@@ -108,33 +138,6 @@ function ProductsListInShop(): JSX.Element {
             {table
               .getFilteredRowModel()
               .rows?.reduce((a, b) => a + b.original.count * b.original.price, 0)
-              .toLocaleString()}
-          </Typography>
-        )
-      },
-      {
-        accessorKey: 'count',
-        header: langFormat({
-          uzb: 'Soni',
-          ru: 'Количество',
-          en: 'Count'
-        }),
-        enableEditing: true,
-        muiEditTextFieldProps: {
-          required: true,
-          variant: 'standard',
-          error: !!validationErrors.count,
-          helperText: validationErrors.count || selectedProduct?.count,
-          onFocus: () => {
-            delete validationErrors.count
-            setValidationErrors(validationErrors)
-          }
-        },
-        Footer: ({ table }) => (
-          <Typography fontWeight={'bold'}>
-            {table
-              .getFilteredRowModel()
-              .rows?.reduce((a, b) => a + b.original.count, 0)
               .toLocaleString()}
           </Typography>
         )
