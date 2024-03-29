@@ -30,7 +30,7 @@ const Head = () => {
       </TableCell>
       <TableCell sx={{ fontWeight: 'bold' }}>
         {langFormat({
-          uzb: 'Umumiy Qarz Miqdori',
+          uzb: 'Umumiy Nasiyalar Miqdori',
           en: 'Total loan',
           ru: 'Всего кредит'
         })}
@@ -61,14 +61,17 @@ const Body = ({ start, end }: { start: Dayjs; end: Dayjs }) => {
     [saledProducts]
   )
   const totalCommingCost = useMemo(
-    () => saledProducts?.reduce((a, b) => a + b.saled_count * b.cost, 0).toLocaleString() || 0,
+    () =>
+      saledProducts
+        ?.reduce((a, b) => a + b.saled_count * b.cost, 0)
+        .toLocaleString('ru-RU', { maximumFractionDigits: 0 }) || 0,
     [saledProducts]
   )
   const totalSellingCost = useMemo(
     () =>
       saledProducts
         ?.reduce((a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100), 0)
-        .toLocaleString() || 0,
+        .toLocaleString('ru-RU', { maximumFractionDigits: 0 }) || 0,
     [saledProducts]
   )
   const totalLoan = useMemo(
@@ -76,7 +79,7 @@ const Body = ({ start, end }: { start: Dayjs; end: Dayjs }) => {
       saledProducts
         ?.filter((p) => p.sale_form === SALE_FORM.LOAN)
         ?.reduce((a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100), 0)
-        .toLocaleString() || 0,
+        .toLocaleString('ru-RU', { maximumFractionDigits: 0 }) || 0,
     [saledProducts]
   )
 
@@ -84,7 +87,7 @@ const Body = ({ start, end }: { start: Dayjs; end: Dayjs }) => {
     () =>
       saledProducts
         ?.reduce((a, b) => a + b.saled_count * (b.saled_price * (1 - b.discount / 100) - b.cost), 0)
-        .toLocaleString() || 0,
+        .toLocaleString('ru-RU', { maximumFractionDigits: 0 }) || 0,
     [saledProducts]
   )
 
