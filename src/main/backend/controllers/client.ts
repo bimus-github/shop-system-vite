@@ -2,6 +2,7 @@
 import { Message_Forms } from '../../models/message'
 import { Client_Type } from '../../models/types'
 import ClientModel from '../schemas/clientModel'
+import fs from 'fs'
 
 export const checkClient = async (client: Client_Type) => {
   try {
@@ -55,5 +56,29 @@ export const deleteClient = async (client: Client_Type) => {
   } catch (error) {
     console.log(error)
     return Message_Forms.ERROR
+  }
+}
+
+export const addAllClients = async () => {
+  try {
+    const res = fs.readFileSync(
+      '/Users/sardorbekaminjonov/Madaminjon/electron apps/shop-system-mdb-vite/data/data.json',
+      'utf-8'
+    )
+
+    const clients = JSON.parse(res).buyers
+    const newClients = clients.map(
+      (c) =>
+        ({
+          name: c.name,
+          id: c.id,
+          date: c.date,
+          phone: c.tel
+        }) as Client_Type
+    )
+
+    await ClientModel.insertMany(newClients)
+  } catch (error) {
+    console.log(error)
   }
 }
