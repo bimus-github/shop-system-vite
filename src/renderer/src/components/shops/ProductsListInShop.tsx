@@ -12,11 +12,9 @@ import { Product_Type } from '../../models/types'
 import {
   Alert,
   AlertTitle,
-  Autocomplete,
   Box,
   Button,
   IconButton,
-  TextField,
   Tooltip,
   Typography,
   colors
@@ -28,9 +26,9 @@ import {
   useGetProductsInShop,
   useUpdateProductFromShop
 } from '../../hooks/productsInShop'
-import { useGetProductsInStorage } from '../../hooks/storage'
 import { langFormat } from '../../functions/langFormat'
 import toast from 'react-hot-toast'
+import { EditName } from './ColumnComponents'
 
 function ProductsListInShop(): JSX.Element {
   const navigate = useNavigate()
@@ -49,54 +47,14 @@ function ProductsListInShop(): JSX.Element {
         size: 100,
         enableEditing: true,
 
-        Edit: ({ row: { original } }) => {
-          return (
-            <Autocomplete
-              options={productsInStorage?.map((p: Product_Type) => p.name) || []}
-              defaultValue={original.name || ''}
-              onInputChange={(_event, newValue) => {
-                if (newValue) {
-                  delete validationErrors.name
-                  setValidationErrors(validationErrors)
-
-                  const newProduct = productsInStorage?.find(
-                    (p: Product_Type) => p.name === newValue
-                  )
-
-                  if (newProduct) {
-                    setSelectedProduct(newProduct)
-                  } else {
-                    setSelectedProduct(undefined)
-                  }
-                } else {
-                  validationErrors.name = langFormat({
-                    uzb: 'Mahsulot nomi',
-                    ru: 'Название продукта',
-                    en: 'Product name'
-                  })
-                  setValidationErrors(validationErrors)
-                }
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={langFormat({
-                    uzb: 'Mahsulot nomi',
-                    ru: 'Название продукта',
-                    en: 'Product name'
-                  })}
-                  variant="standard"
-                  error={!!validationErrors.name}
-                  helperText={validationErrors.name}
-                  onFocus={() => {
-                    delete validationErrors.name
-                    setValidationErrors(validationErrors)
-                  }}
-                />
-              )}
-            />
-          )
-        }
+        Edit: (props) => (
+          <EditName
+            validationErrors={validationErrors}
+            setValidationErrors={setValidationErrors}
+            setSelectedProduct={setSelectedProduct}
+            {...props}
+          />
+        )
       },
       {
         accessorKey: 'cost',
@@ -110,10 +68,10 @@ function ProductsListInShop(): JSX.Element {
         muiEditTextFieldProps: {
           required: true,
           variant: 'standard',
-          error: !!validationErrors.price,
-          helperText: validationErrors.price || selectedProduct?.price,
+          error: !!validationErrors.cost,
+          helperText: validationErrors.cost || selectedProduct?.cost,
           onFocus: () => {
-            delete validationErrors.price
+            delete validationErrors.cost
             setValidationErrors(validationErrors)
           }
         },
@@ -138,10 +96,10 @@ function ProductsListInShop(): JSX.Element {
         muiEditTextFieldProps: {
           required: true,
           variant: 'standard',
-          error: !!validationErrors.cost,
-          helperText: validationErrors.cost || selectedProduct?.cost,
+          error: !!validationErrors.price,
+          helperText: validationErrors.price || selectedProduct?.price,
           onFocus: () => {
-            delete validationErrors.cost
+            delete validationErrors.price
             setValidationErrors(validationErrors)
           }
         },
@@ -191,11 +149,6 @@ function ProductsListInShop(): JSX.Element {
     isPending: isGetProductsPending,
     isFetching: isGetProductsFetching
   } = useGetProductsInShop(shopId || '')
-  const {
-    data: productsInStorage,
-    isError: isGetProductsInStorageError,
-    isPending: isGetProductsInStoragePending
-  } = useGetProductsInStorage()
 
   const {
     data: resultCreatingNewProduct,
@@ -305,7 +258,7 @@ function ProductsListInShop(): JSX.Element {
     positionActionsColumn: 'last',
     editDisplayMode: 'row',
     onEditingRowSave: handelSaveProductToShop,
-    createDisplayMode: 'row',
+    createDisplayMode: 'modal',
     muiSearchTextFieldProps: {
       autoFocus: true,
       placeholder: langFormat({
@@ -400,13 +353,11 @@ function ProductsListInShop(): JSX.Element {
     state: {
       isLoading:
         isGetProductsPending ||
-        isGetProductsInStoragePending ||
         isCreatingNewProduct ||
         isUpdateProductPending ||
         isDeleteProductPending,
       showAlertBanner:
         isGetProductsError ||
-        isGetProductsInStorageError ||
         isCreatingNewProductError ||
         !!resultCreatingNewProduct ||
         isUpdateProductError ||
