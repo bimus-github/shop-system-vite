@@ -13,7 +13,7 @@ import { useGetClients } from '@renderer/hooks/client'
 import { useUpdateSaledProduct } from '@renderer/hooks/sale'
 import { SALE_FORM, Saled_Product_Type } from '@renderer/models/types'
 import { MRT_Cell, MRT_Column, MRT_Header, MRT_Row, MRT_TableInstance } from 'material-react-table'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import toast from 'react-hot-toast'
 
 type FilterByProps = {
@@ -63,12 +63,44 @@ export function FilterByBuyer(props: FilterByProps): JSX.Element {
   )
 }
 
+export function FilterByDate(props: FilterByProps): JSX.Element {
+  const now = useMemo(
+    () =>
+      new Date().toLocaleDateString('ru-RU', {
+        year: '2-digit',
+        month: '2-digit',
+        day: '2-digit'
+      }),
+    []
+  )
+  useEffect(() => {
+    props.column.setFilterValue(now)
+  }, [])
+
+  return (
+    <TextField
+      {...props}
+      defaultValue={now}
+      onChange={(e) => {
+        props.column.setFilterValue(e.target.value)
+      }}
+      variant="standard"
+      sx={{ width: '200px' }}
+      placeholder={langFormat({
+        uzb: 'Sana',
+        ru: 'Дата',
+        en: 'Date'
+      })}
+    />
+  )
+}
+
 export function FilterBySaleForm(props: FilterByProps): JSX.Element {
   return (
     <Autocomplete
       {...props}
       options={Object.values(SALE_FORM)}
-      defaultValue={SALE_FORM.LOAN}
+      defaultValue={SALE_FORM.CARD}
       onInputChange={(_, value) => {
         props.column.setFilterValue(value)
       }}
@@ -192,36 +224,32 @@ export function SalefFromCell(props: SalefFromCell): JSX.Element {
 
 export function PriceFooter(props: Footer): JSX.Element {
   const { table } = props
-  const total = useMemo(
-    () =>
-      table
-        .getFilteredRowModel()
-        .rows.reduce(
-          (sum, row) =>
-            sum +
-            row.original.saled_price * row.original.saled_count * (1 - row.original.discount / 100),
-          0
-        ),
-    [table]
+  const total = table
+    .getFilteredRowModel()
+    .rows.reduce(
+      (sum, row) =>
+        sum +
+        row.original.saled_price * row.original.saled_count * (1 - row.original.discount / 100),
+      0
+    )
+  return (
+    <Typography fontWeight={'bold'}>
+      {total.toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
+    </Typography>
   )
-  return <Typography fontWeight={'bold'}>{total.toLocaleString()}</Typography>
 }
 
 export function ProfitFooter(props: Footer): JSX.Element {
   const { table } = props
-  const total = useMemo(
-    () =>
-      table
-        .getFilteredRowModel()
-        .rows.reduce(
-          (sum, row) =>
-            sum +
-            (row.original.saled_price * (1 - row.original.discount / 100) - row.original.cost) *
-              row.original.saled_count,
-          0
-        )
-        .toLocaleString(),
-    [table]
-  )
-  return <Typography fontWeight={'bold'}>{total.toLocaleString()}</Typography>
+  const total = table
+    .getFilteredRowModel()
+    .rows.reduce(
+      (sum, row) =>
+        sum +
+        (row.original.saled_price * (1 - row.original.discount / 100) - row.original.cost) *
+          row.original.saled_count,
+      0
+    )
+    .toLocaleString('ru-RU', { maximumFractionDigits: 0 })
+  return <Typography fontWeight={'bold'}>{total}</Typography>
 }
