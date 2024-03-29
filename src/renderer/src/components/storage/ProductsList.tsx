@@ -101,6 +101,7 @@ function ProductsList(): JSX.Element {
       },
       {
         accessorKey: 'cost',
+        accessorFn: (row) => row.cost.toLocaleString('ru-RU', { maximumFractionDigits: 0 }),
         header: langFormat({
           uzb: 'Kelish narxi',
           en: 'Cost',
@@ -113,12 +114,13 @@ function ProductsList(): JSX.Element {
             {table
               .getFilteredRowModel()
               .rows?.reduce((a, b) => a + b.original.cost * b.original.count, 0)
-              .toLocaleString()}
+              .toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
           </Typography>
         )
       },
       {
         accessorKey: 'price',
+        accessorFn: (row) => row.price.toLocaleString('ru-RU', { maximumFractionDigits: 0 }),
         header: langFormat({ uzb: 'Narxi', en: 'Price', ru: 'Цена' }),
         size: 80,
         enableEditing: false,
