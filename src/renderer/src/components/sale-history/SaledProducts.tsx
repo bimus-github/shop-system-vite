@@ -17,11 +17,13 @@ import RowActions from './RowActions'
 import TopToolbarCustomActions from './TopToolbarCustomActions'
 import {
   FilterByBuyer,
+  FilterByDate,
   FilterBySaleForm,
   PriceFooter,
   ProfitFooter,
   SalefFromCell
 } from './ColumnCompenents'
+import { dateFormat } from '@renderer/functions/dateFormat'
 
 function SaledProducts(): JSX.Element {
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
@@ -123,7 +125,7 @@ function SaledProducts(): JSX.Element {
           ru: 'Стоимость прихода',
           en: 'Cost of comming'
         }),
-        accessorFn: (row) => row.cost.toLocaleString(),
+        accessorFn: (row) => row.cost.toLocaleString('ru-RU', { maximumFractionDigits: 0 }),
         enableEditing: false,
         size: 70
       },
@@ -135,6 +137,7 @@ function SaledProducts(): JSX.Element {
           en: 'Saled price'
         }),
         size: 70,
+        accessorFn: (row) => row.saled_price.toLocaleString('ru-RU', { maximumFractionDigits: 0 }),
         muiEditTextFieldProps: {
           required: true,
           variant: 'standard',
@@ -148,7 +151,10 @@ function SaledProducts(): JSX.Element {
       },
       {
         accessorKey: 'profit',
-        accessorFn: (row) => ((row.saled_price - row.cost) * row.saled_count).toLocaleString(),
+        accessorFn: (row) =>
+          ((row.saled_price - row.cost) * row.saled_count).toLocaleString('ru-RU', {
+            maximumFractionDigits: 0
+          }),
         header: langFormat({
           uzb: 'Foyda',
           ru: 'Прибыль',
@@ -170,21 +176,14 @@ function SaledProducts(): JSX.Element {
       {
         accessorKey: 'saled_date',
         header: langFormat({
-          uzb: 'Sotish sanasi',
+          uzb: 'Sotilgan sana',
           ru: 'Дата продажи',
           en: 'Saled date'
         }),
         enableEditing: false,
-        accessorFn: (row) =>
-          new Date(+row.saled_date).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false
-          }),
+        accessorFn: (row) => dateFormat(row.saled_date),
+        // default value to filter input
+        Filter: FilterByDate,
         size: 130
       }
     ],
@@ -236,9 +235,16 @@ function SaledProducts(): JSX.Element {
     paginationDisplayMode: 'default',
     positionGlobalFilter: 'left',
     selectAllMode: 'all',
-    muiPaginationProps: {
-      rowsPerPageOptions: [30, data?.length || 50]
-    },
+    muiPaginationProps: ({ table }) => ({
+      rowsPerPageOptions: [
+        30,
+        60,
+        90,
+        table.getFilteredRowModel().rows.length > 120
+          ? table.getFilteredRowModel().rows.length
+          : 120
+      ]
+    }),
     onEditingRowSave: handleUpdateSaledProduct,
     initialState: {
       pagination: { pageIndex: 0, pageSize: 30 },
