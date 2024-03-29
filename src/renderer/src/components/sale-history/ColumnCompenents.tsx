@@ -50,6 +50,7 @@ export function FilterByBuyer(props: FilterByProps): JSX.Element {
       renderInput={(params) => (
         <TextField
           {...params}
+          autoFocus
           variant="standard"
           sx={{ width: '200px' }}
           placeholder={langFormat({
@@ -100,7 +101,7 @@ export function FilterBySaleForm(props: FilterByProps): JSX.Element {
     <Autocomplete
       {...props}
       options={Object.values(SALE_FORM)}
-      defaultValue={SALE_FORM.CARD}
+      defaultValue={SALE_FORM.LOAN}
       onInputChange={(_, value) => {
         props.column.setFilterValue(value)
       }}
