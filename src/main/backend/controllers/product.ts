@@ -2,6 +2,7 @@
 import { Message_Forms } from '../../models/message'
 import { Product_Type } from '../../models/types'
 import ProductModel from '../schemas/productModel'
+// import fs from 'fs'
 
 const checkProduct = async (product: Product_Type) => {
   const checkProduct = await ProductModel.findOne({
@@ -176,42 +177,32 @@ export const deleteFromStok = async (deletedProduct: Product_Type) => {
   }
 }
 
-// export const addAllProducts = async () => {
-//   try {
-//     // console.log(
-//     //   products.map(
-//     //     (product) =>
-//     //       ({
-//     //         id: product.id,
-//     //         name: product.name,
-//     //         barcode: product.code,
-//     //         cost: product.commingPrice,
-//     //         price: product.salePrice
-//     //       }) as Product_Type
-//     //   )
-//     // )
+export const addAllProducts = async () => {
+  try {
+    // const res = fs.readFileSync(
+    //   '/Users/sardorbekaminjonov/Madaminjon/electron apps/shop-system-mdb-vite/data/data.json',
+    //   'utf-8'
+    // )
 
-//     ProductModel
-//       .insertMany
-//       // products.map(
-//       //   (product) =>
-//       //     ({
-//       //       id: product.id,
-//       //       name: product.name,
-//       //       barcode: product.code,
-//       //       cost: product.commingPrice,
-//       //       price: product.salePrice,
-//       //       count: product.count
-//       //     }) as Product_Type
-//       // )
-//       ()
-//       .then(() => {
-//         console.log('All products added')
-//       })
+    // const products = JSON.parse(res).products
 
-//     return Message_Forms.SUCCESS
-//   } catch (error) {
-//     console.log(error)
-//     return Message_Forms.ERROR
-//   }
-// }
+    // const newProducts = products.map(
+    //   (p) =>
+    //     ({
+    //       barcode: p.code,
+    //       name: p.name,
+    //       cost: p.commingPrice,
+    //       count: p.count,
+    //       id: p.id,
+    //       price: p.salePrice
+    //     }) as Product_Type
+    // )
+
+    // await ProductModel.insertMany(newProducts)
+
+    return Message_Forms.SUCCESS
+  } catch (error) {
+    console.log(error)
+    return Message_Forms.ERROR
+  }
+}
