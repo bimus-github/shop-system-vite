@@ -12,6 +12,7 @@ import { Add } from '@mui/icons-material'
 import { useAddClient, useGetClients } from '../../hooks/client'
 import { langFormat } from '../../functions/langFormat'
 import { RowActions } from './RowActions'
+import { dateFormat } from '@renderer/functions/dateFormat'
 
 function ClientsList(): JSX.Element {
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
@@ -59,6 +60,7 @@ function ClientsList(): JSX.Element {
       },
       {
         accessorKey: 'date',
+        accessorFn: (row) => dateFormat(+row.date),
         header: langFormat({ uzb: 'Sana', ru: 'Дата', en: 'Date' }),
         enableEditing: false
       }
