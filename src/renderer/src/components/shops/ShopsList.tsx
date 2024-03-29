@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom'
 import { useCreateShop, useDeleteShop, useGetShops, useUpdateShop } from '../../hooks/shop'
 import { langFormat } from '../../functions/langFormat'
 import toast from 'react-hot-toast'
+import { dateFormat } from '@renderer/functions/dateFormat'
 
 function ShopsList(): JSX.Element {
   const navigate = useNavigate()
@@ -48,7 +49,7 @@ function ShopsList(): JSX.Element {
       },
       {
         accessorKey: 'loan_price',
-        header: langFormat({ uzb: 'Kredit', en: 'Loan', ru: 'Кредит' }),
+        header: langFormat({ uzb: 'Qarzim', en: 'My Loan', ru: 'Задолженность' }),
         enableEditing: true,
         muiEditTextFieldProps: {
           variant: 'standard',
@@ -121,14 +122,7 @@ function ShopsList(): JSX.Element {
       },
       {
         accessorKey: 'date',
-        accessorFn: (row) =>
-          new Date(row.date).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
-          }),
+        accessorFn: (row) => dateFormat(+row.date),
         header: langFormat({ uzb: 'Sana', en: 'Date', ru: 'Дата' }),
         enableEditing: false
       }
