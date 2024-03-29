@@ -236,7 +236,7 @@ function RightSide(): JSX.Element {
               >
                 <Typography fontWeight={'bold'}>{index + 1}.</Typography>{' '}
                 <Typography sx={{ mr: 'auto', ml: 5 }}>
-                  {new Date(data.date).toLocaleDateString('en-US', {
+                  {new Date(data.date).toLocaleDateString('ru-RU', {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric',
