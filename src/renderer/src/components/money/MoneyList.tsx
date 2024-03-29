@@ -63,7 +63,7 @@ function MoneyList(): JSX.Element {
       },
       {
         accessorKey: 'date',
-        accessorFn: (row) => new Date(+row.date).toLocaleDateString('en-US'),
+        accessorFn: (row) => new Date(+row.date).toLocaleDateString('ru-RU'),
         header: langFormat({ uzb: 'Sana', ru: 'Дата', en: 'Date' }),
         enableEditing: false
       }
