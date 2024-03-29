@@ -109,13 +109,9 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
       saled_date: new Date().valueOf()
     }
 
-    addProduct(newSaledProduct).then((result) => {
-      if (!result) {
-        refetch()
-      }
-      if (!result) {
-        table.resetGlobalFilter()
-      }
+    addProduct(newSaledProduct).then(() => {
+      refetch()
+      table.setGlobalFilter('')
     })
   }
 
