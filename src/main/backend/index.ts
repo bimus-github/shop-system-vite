@@ -9,6 +9,9 @@ import { moneyRoutes } from './routes/money'
 import { dataRoutes } from './routes/data'
 import { userRoutes } from './routes/user'
 import { mongodb_local } from './consts'
+// import { addAllShop } from './controllers/shop'
+// import { addAllClients } from './controllers/client'
+// import { addAllProducts } from './controllers/product'
 // import { addAllSaledProducts } from './controllers/saledProduct'
 
 mongoose
@@ -41,6 +44,9 @@ mongoose
     // user routes
     userRoutes()
 
-    // addAllSaledProducts().then(() => console.log('added all saled products'))
+    // addAllProducts()
+    // addAllSaledProducts()
+    // addAllClients()
+    // addAllShop()
   })
   .catch((err) => console.error(err))
