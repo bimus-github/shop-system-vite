@@ -75,7 +75,8 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
           en: 'Count'
         }),
         size: 100,
-        enableGlobalFilter: false
+        enableGlobalFilter: false,
+        sortDescFirst: true
       }
     ],
     []
@@ -128,12 +129,22 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
     enableColumnVirtualization: false,
     enableGlobalFilterModes: false,
     enableColumnFilters: false,
+    globalFilterFn: 'startsWithNoSpace',
+    filterFns: {
+      startsWithNoSpace: (row, id, value) => {
+        return (row.getValue(id) as string)
+          .toLocaleLowerCase()
+          .replaceAll(' ', '')
+          .startsWith(value.toLocaleLowerCase().replaceAll(' ', ''))
+      }
+    },
     initialState: {
       showGlobalFilter: true
     },
     muiTableBodyRowProps: ({ row, table }) => ({
       onClick: () => {
         handleAddProductToSaleSide(row.original, table)
+        searchRef.current?.focus()
       }
     }),
     muiSearchTextFieldProps: {
@@ -143,10 +154,8 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
         uzb: 'Qidirish',
         ru: 'Поиск',
         en: 'Search'
-      }),
-      tabIndex: 1
+      })
     },
-    getRowId: (row) => row.id,
     muiTableContainerProps: {
       sx: {
         maxHeight: '350px'
@@ -259,6 +268,40 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
           <b>{langFormat({ uzb: 'Jami', ru: 'Всего', en: 'Total' })}: </b> {total} so'm
         </Typography>
       </Box>
+
+      <MaterialReactTable table={table} />
+
+      <Box sx={{ display: 'flex', gap: '1rem', width: '100%', mt: 'auto' }}>
+        <Autocomplete
+          fullWidth
+          size="small"
+          disablePortal
+          value={buyer}
+          options={(clients || [])?.map((c) => c.name) || []}
+          onInputChange={(_e, newValue) => setBuyer(newValue)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label={langFormat({
+                uzb: 'Haridor',
+                ru: 'Покупатель',
+                en: 'Buyer'
+              })}
+              size="small"
+              variant="outlined"
+            />
+          )}
+        />
+
+        <TextField
+          fullWidth
+          size="small"
+          label={langFormat({ uzb: 'Chegirma', ru: 'Скидка', en: 'Discount' })}
+          type="number"
+          value={discount}
+          onChange={(e) => setDiscount(+e.target.value)}
+        />
+      </Box>
       <ButtonGroup
         fullWidth
         sx={{
@@ -288,42 +331,6 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
           {langFormat({ uzb: 'Plastik', ru: 'Пластик', en: 'Plastic' })} [F3]
         </Button>
       </ButtonGroup>
-
-      <MaterialReactTable table={table} />
-
-      <Box sx={{ display: 'flex', gap: '1rem', width: '100%', mt: 'auto' }}>
-        <Autocomplete
-          fullWidth
-          size="small"
-          disablePortal
-          value={buyer}
-          options={(clients || [])?.map((c) => c.name) || []}
-          onInputChange={(_e, newValue) => setBuyer(newValue)}
-          tabIndex={3}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label={langFormat({
-                uzb: 'Haridor',
-                ru: 'Покупатель',
-                en: 'Buyer'
-              })}
-              size="small"
-              variant="outlined"
-            />
-          )}
-        />
-
-        <TextField
-          fullWidth
-          size="small"
-          label={langFormat({ uzb: 'Chegirma', ru: 'Скидка', en: 'Discount' })}
-          type="number"
-          value={discount}
-          tabIndex={2}
-          onChange={(e) => setDiscount(+e.target.value)}
-        />
-      </Box>
       <ButtonGroup
         fullWidth
         sx={{
