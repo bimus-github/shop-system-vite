@@ -93,6 +93,7 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
 
   const handleClickResetRoom = (): void => {
     resetRoom()
+    searchRef.current?.getElementsByTagName('input')[0].focus()
   }
 
   const handleAddProductToSaleSide = (
@@ -135,7 +136,7 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
         return (row.getValue(id) as string)
           .toLocaleLowerCase()
           .replaceAll(' ', '')
-          .startsWith(value.toLocaleLowerCase().replaceAll(' ', ''))
+          .includes(value.toLocaleLowerCase().replaceAll(' ', ''))
       }
     },
     initialState: {
@@ -144,12 +145,12 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
     muiTableBodyRowProps: ({ row, table }) => ({
       onClick: () => {
         handleAddProductToSaleSide(row.original, table)
-        searchRef.current?.focus()
+        searchRef.current?.getElementsByTagName('input')[0].focus()
       }
     }),
     muiSearchTextFieldProps: {
-      autoFocus: true,
       ref: searchRef,
+      autoFocus: true,
       placeholder: langFormat({
         uzb: 'Qidirish',
         ru: 'Поиск',
@@ -168,6 +169,7 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
       handleSale(saledProducts, discount, buyer, saleForm)
       setBuyer('')
       setDiscount(0)
+      searchRef.current?.getElementsByTagName('input')[0].focus()
     }
   }
 
@@ -315,18 +317,21 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
         <Button
           onClick={() => handleSaleAs(SALE_FORM.CASH)}
           sx={{ bgcolor: colors.green.A400, fontWeight: '800' }}
+          disabled={!!disableMode}
         >
           {langFormat({ uzb: 'Naqd', ru: 'Наличка', en: 'Cash' })} [F1]
         </Button>
         <Button
           onClick={() => handleSaleAs(SALE_FORM.LOAN)}
           sx={{ bgcolor: colors.red.A400, fontWeight: '800' }}
+          disabled={!!disableMode}
         >
           {langFormat({ uzb: 'Qarz', ru: 'Долг', en: 'Loan' })} [F2]
         </Button>
         <Button
           onClick={() => handleSaleAs(SALE_FORM.CARD)}
           sx={{ bgcolor: colors.blue.A400, fontWeight: '800' }}
+          disabled={!!disableMode}
         >
           {langFormat({ uzb: 'Plastik', ru: 'Пластик', en: 'Plastic' })} [F3]
         </Button>
