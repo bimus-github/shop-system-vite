@@ -14,27 +14,32 @@ interface EditByProps {
   validationErrors: Record<string, string | undefined>
   setValidationErrors: (validationErrors: Record<string, string | undefined>) => void
   setSelectedProduct: (product: Product_Type | undefined) => void
+  ref: React.RefObject<HTMLInputElement>
 }
 
 export const EditName = ({
   row: { original },
   setValidationErrors,
   validationErrors,
-  setSelectedProduct
+  setSelectedProduct,
+  ref
 }: EditByProps) => {
   const { data: productsInStorage } = useGetProductsInStorage()
   return (
     <Autocomplete
       options={productsInStorage || []}
+      ref={ref}
       filterOptions={(options, { inputValue }) =>
-        search(inputValue, options, ['name', 'barcode'], 'starts-with-no-space')
+        search(inputValue, options, ['name', 'barcode'], 'fuzzy')
       }
       noOptionsText={langFormat({
         uzb: 'Mahsulot topilmadi',
         ru: 'Продукт не найден',
         en: 'Product not found'
       })}
-      getOptionLabel={(option) => option?.name + '/' + option?.barcode}
+      getOptionLabel={(option) =>
+        `${option.name && option.barcode ? `${option.name} (${option.barcode})` : ''}`
+      }
       defaultValue={original || ''}
       onChange={(_event, newValue) => {
         if (newValue) {
@@ -85,8 +90,10 @@ export const EditName = ({
           error={!!validationErrors.name}
           helperText={validationErrors.name}
           onFocus={() => {
-            delete validationErrors.name
-            setValidationErrors(validationErrors)
+            setValidationErrors({
+              ...validationErrors,
+              name: undefined
+            })
           }}
         />
       )}
