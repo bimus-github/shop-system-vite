@@ -1,6 +1,6 @@
 {
   "name": "shop-system",
-  "version": "2.9.9",
+  "version": "3.0.1",
   "description": "Shop System App",
   "main": "./out/main/index.js",
   "author": "Muhammad Amin",
@@ -27,7 +27,7 @@
     "electron-updater": "^6.1.7",
     "mongoose": "^8.2.2",
     "react-hot-toast": "^2.4.1",
-    "search-in-js": "^2.0.1"
+    "search-in-js": "^2.1.0"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
