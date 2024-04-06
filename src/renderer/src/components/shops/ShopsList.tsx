@@ -49,7 +49,8 @@ function ShopsList(): JSX.Element {
       },
       {
         accessorKey: 'loan_price',
-        accessorFn: (row) => row?.loan_price.toLocaleString('ru-RU', { maximumFractionDigits: 0 }),
+        accessorFn: (row) =>
+          (row?.loan_price || 0).toLocaleString('ru-RU', { maximumFractionDigits: 0 }),
         header: langFormat({ uzb: 'Qarzim', en: 'My Loan', ru: 'Задолженность' }),
 
         enableEditing: true,
@@ -65,49 +66,50 @@ function ShopsList(): JSX.Element {
         },
         Footer: ({ table }) => (
           <Typography fontWeight={'bold'}>
-            {table
-              .getFilteredRowModel()
-              .rows?.reduce((a, b) => a + b.original.loan_price, 0)
-              .toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
+            {(
+              table.getFilteredRowModel().rows?.reduce((a, b) => a + b.original.loan_price, 0) || 0
+            ).toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
           </Typography>
         )
       },
       {
         accessorFn: (row) =>
-          row?.products
-            ?.reduce((a, b) => a + b.count * b.cost, 0)
-            .toLocaleString('ru-RU', { maximumFractionDigits: 0 }) || 0,
+          (row?.products?.reduce((a, b) => a + b.count * b.cost, 0) || 0).toLocaleString('ru-RU', {
+            maximumFractionDigits: 0
+          }) || 0,
         header: langFormat({ uzb: 'Kelish Narxi', en: 'Cost', ru: 'Приход' }),
         enableEditing: false,
         Footer: ({ table }) => (
           <Typography fontWeight={'bold'}>
-            {table
-              .getFilteredRowModel()
-              ?.rows?.reduce(
-                (a, b) => a + b.original?.products?.reduce((x, y) => x + y.count * y.cost, 0),
-                0
-              )
-              .toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
+            {(
+              table
+                .getFilteredRowModel()
+                ?.rows?.reduce(
+                  (a, b) => a + b.original?.products?.reduce((x, y) => x + y.count * y.cost, 0),
+                  0
+                ) || 0
+            ).toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
           </Typography>
         )
       },
       {
         accessorFn: (row) =>
-          row?.products
-            ?.reduce((a, b) => a + b.count * (b.price - b.cost), 0)
-            .toLocaleString('ru-RU', { maximumFractionDigits: 0 }) || 0,
+          (
+            row?.products?.reduce((a, b) => a + b.count * (b.price - b.cost), 0) || 0
+          ).toLocaleString('ru-RU', { maximumFractionDigits: 0 }) || 0,
         header: langFormat({ uzb: 'Foyda', en: 'Profit', ru: 'Прибыль' }),
         enableEditing: false,
         Footer: ({ table }) => (
           <Typography fontWeight={'bold'}>
-            {table
-              .getFilteredRowModel()
-              .rows?.reduce(
-                (a, b) =>
-                  a + b.original?.products?.reduce((x, y) => x + y.count * (y.price - y.cost), 0),
-                0
-              )
-              .toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
+            {(
+              table
+                .getFilteredRowModel()
+                .rows?.reduce(
+                  (a, b) =>
+                    a + b.original?.products?.reduce((x, y) => x + y.count * (y.price - y.cost), 0),
+                  0
+                ) || 0
+            ).toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
           </Typography>
         )
       },
@@ -128,7 +130,7 @@ function ShopsList(): JSX.Element {
       },
       {
         accessorKey: 'date',
-        accessorFn: (row) => dateFormat(+row.date),
+        accessorFn: (row) => dateFormat(+row.date || new Date().valueOf()),
         header: langFormat({ uzb: 'Sana', en: 'Date', ru: 'Дата' }),
         enableEditing: false
       }
