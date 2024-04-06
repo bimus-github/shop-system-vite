@@ -6,7 +6,7 @@ import {
   MaterialReactTable,
   useMaterialReactTable
 } from 'material-react-table'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useRef } from 'react'
 import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import { Product_Type } from '../../models/types'
 import {
@@ -31,6 +31,7 @@ import toast from 'react-hot-toast'
 import { EditName } from './ColumnComponents'
 
 function ProductsListInShop(): JSX.Element {
+  const refNmaeInput = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
   const [selectedProduct, setSelectedProduct] = useState<Product_Type>()
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
@@ -49,6 +50,7 @@ function ProductsListInShop(): JSX.Element {
 
         Edit: (props) => (
           <EditName
+            ref={refNmaeInput}
             validationErrors={validationErrors}
             setValidationErrors={setValidationErrors}
             setSelectedProduct={setSelectedProduct}
@@ -208,6 +210,7 @@ function ProductsListInShop(): JSX.Element {
         table.setCreatingRow(null)
         setSelectedProduct(undefined)
         setTimeout(() => table.setCreatingRow(true), 500)
+        refNmaeInput.current?.getElementsByTagName('input')[0].focus()
       }
     })
   }
@@ -246,6 +249,7 @@ function ProductsListInShop(): JSX.Element {
       if (!result) {
         table.setEditingRow(null)
         setSelectedProduct(undefined)
+        refNmaeInput.current?.getElementsByTagName('input')[0].focus()
       }
     })
   }
