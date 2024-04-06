@@ -15,18 +15,6 @@ const checkProduct = async (product: Product_Type) => {
   }
 }
 
-const checkProductForUpdate = async (product: Product_Type) => {
-  const checkProduct = await ProductModel.findOne({
-    $or: [{ barcode: product.barcode }, { name: product.name }],
-    id: { $ne: product.id }
-  })
-  if (checkProduct) {
-    return true
-  } else {
-    return false
-  }
-}
-
 export const createProduct = async (product: Product_Type) => {
   try {
     // build regExp for barcode and name lowercase
@@ -69,18 +57,10 @@ export const deleteProduct = async (id: string) => {
 
 export const updateProduct = async (product: Product_Type) => {
   try {
-    const checkProduct = await checkProductForUpdate(product)
+    await ProductModel.findOneAndReplace({ id: product.id }, product)
 
-    if (checkProduct) {
-      return {
-        message: Message_Forms.ALREADY_EXISTS
-      }
-    } else {
-      await ProductModel.updateOne({ id: product.id }, product)
-
-      return {
-        message: Message_Forms.SUCCESS
-      }
+    return {
+      message: Message_Forms.SUCCESS
     }
   } catch (error) {
     console.log(error)
