@@ -18,6 +18,7 @@ import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material'
 import { Add, Delete, Edit } from '@mui/icons-material'
 import { langFormat } from '../../functions/langFormat'
 import toast from 'react-hot-toast'
+import { randomNumberRange } from '@renderer/functions/randomNumbers'
 
 function ProductsList(): JSX.Element {
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
@@ -61,6 +62,7 @@ function ProductsList(): JSX.Element {
         muiEditTextFieldProps: {
           required: true,
           variant: 'standard',
+
           error: !!validationErrors.name,
           helperText: validationErrors.name,
           autoComplete: 'off',
@@ -74,14 +76,23 @@ function ProductsList(): JSX.Element {
         accessorKey: 'barcode',
         header: langFormat({ uzb: 'Barkod', en: 'Barcode', ru: 'Штрих-код' }),
         enableEditing: true,
-        muiEditTextFieldProps: {
-          required: true,
-          variant: 'standard',
-          error: !!validationErrors.barcode,
-          helperText: validationErrors.barcode,
-          onFocus: () => {
-            delete validationErrors.barcode
-            setValidationErrors(validationErrors)
+        muiEditTextFieldProps: ({ row }) => {
+          const [barcode, setBarcode] = useState(
+            row.original.barcode || randomNumberRange(1000, 9999).toString()
+          )
+          return {
+            required: true,
+            variant: 'standard',
+            value: barcode.toString(),
+            onChange: (e) => {
+              setBarcode(e.target.value)
+            },
+            error: !!validationErrors.barcode,
+            helperText: validationErrors.barcode,
+            onFocus: () => {
+              delete validationErrors.barcode
+              setValidationErrors(validationErrors)
+            }
           }
         }
       },
@@ -211,7 +222,8 @@ function ProductsList(): JSX.Element {
 
   const handelSaveProduct: MRT_TableOptions<Product_Type>['onEditingRowSave'] = async ({
     values,
-    table
+    table,
+    row
   }) => {
     const newValidateErrors = validateProduct(values)
 
@@ -221,7 +233,13 @@ function ProductsList(): JSX.Element {
     }
     setValidationErrors({})
 
-    const result = await updateProduct(values)
+    const updatedRow: Product_Type = {
+      ...row.original,
+      name: values.name,
+      barcode: values.barcode
+    }
+
+    const result = await updateProduct(updatedRow)
     if (!result) table.setEditingRow(null)
   }
 
