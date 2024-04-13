@@ -1,6 +1,6 @@
 {
   "name": "shop-system",
-  "version": "3.0.1",
+  "version": "3.5.0",
   "description": "Shop System App",
   "main": "./out/main/index.js",
   "author": "Muhammad Amin",
