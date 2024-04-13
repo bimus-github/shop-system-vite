@@ -1,4 +1,4 @@
-import { Refresh } from '@mui/icons-material'
+import { Close, Refresh } from '@mui/icons-material'
 import {
   Autocomplete,
   Box,
@@ -13,7 +13,7 @@ import { useGetClients } from '@renderer/hooks/client'
 import { useUpdateSaledProduct } from '@renderer/hooks/sale'
 import { SALE_FORM, Saled_Product_Type } from '@renderer/models/types'
 import { MRT_Cell, MRT_Column, MRT_Header, MRT_Row, MRT_TableInstance } from 'material-react-table'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 
 type FilterByProps = {
@@ -65,15 +65,14 @@ export function FilterByBuyer(props: FilterByProps): JSX.Element {
 }
 
 export function FilterByDate(props: FilterByProps): JSX.Element {
-  const now = useMemo(
-    () =>
-      new Date().toLocaleDateString('ru-RU', {
-        year: '2-digit',
-        month: '2-digit',
-        day: '2-digit'
-      }),
-    []
+  const [now, setNow] = useState(
+    new Date().toLocaleDateString('ru-RU', {
+      year: '2-digit',
+      month: '2-digit',
+      day: '2-digit'
+    })
   )
+
   useEffect(() => {
     props.column.setFilterValue(now)
   }, [])
@@ -81,9 +80,10 @@ export function FilterByDate(props: FilterByProps): JSX.Element {
   return (
     <TextField
       {...props}
-      defaultValue={now}
+      value={now}
       onChange={(e) => {
         props.column.setFilterValue(e.target.value)
+        setNow(e.target.value)
       }}
       variant="standard"
       sx={{ width: '200px' }}
@@ -92,6 +92,17 @@ export function FilterByDate(props: FilterByProps): JSX.Element {
         ru: 'Дата',
         en: 'Date'
       })}
+      InputProps={{
+        endAdornment: (
+          <Close
+            sx={{ cursor: 'pointer' }}
+            onClick={() => {
+              props.column.setFilterValue('')
+              setNow('')
+            }}
+          />
+        )
+      }}
     />
   )
 }
