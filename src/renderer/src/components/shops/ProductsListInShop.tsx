@@ -31,7 +31,7 @@ import toast from 'react-hot-toast'
 import { EditName } from './ColumnComponents'
 
 function ProductsListInShop(): JSX.Element {
-  const refNmaeInput = useRef<HTMLInputElement>(null)
+  const refNameInput = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
   const [selectedProduct, setSelectedProduct] = useState<Product_Type>()
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
@@ -50,7 +50,7 @@ function ProductsListInShop(): JSX.Element {
 
         Edit: (props) => (
           <EditName
-            ref={refNmaeInput}
+            ref={refNameInput}
             validationErrors={validationErrors}
             setValidationErrors={setValidationErrors}
             setSelectedProduct={setSelectedProduct}
@@ -88,7 +88,6 @@ function ProductsListInShop(): JSX.Element {
       },
       {
         accessorKey: 'cost',
-        accessorFn: (row) => row?.cost.toLocaleString('ru-RU', { maximumFractionDigits: 0 }),
         header: langFormat({
           uzb: 'Kelish narxi',
           ru: 'Цена покупки',
@@ -117,7 +116,6 @@ function ProductsListInShop(): JSX.Element {
       },
       {
         accessorKey: 'price',
-        accessorFn: (row) => row?.price.toLocaleString('ru-RU', { maximumFractionDigits: 0 }),
         header: langFormat({
           uzb: 'Sotish narxi',
           ru: 'Цена продажи',
@@ -210,7 +208,7 @@ function ProductsListInShop(): JSX.Element {
         table.setCreatingRow(null)
         setSelectedProduct(undefined)
         setTimeout(() => table.setCreatingRow(true), 500)
-        refNmaeInput.current?.getElementsByTagName('input')[0].focus()
+        refNameInput.current?.getElementsByTagName('input')[0].focus()
       }
     })
   }
@@ -240,16 +238,18 @@ function ProductsListInShop(): JSX.Element {
 
     const newProduct: Product_Type = {
       ...selectedProduct,
-      cost: values.cost,
-      price: values.price,
-      count: values.count
+      cost: +values.cost,
+      price: +values.price,
+      count: +values.count
     }
+
+    console.log(newProduct)
 
     updateProduct(newProduct).then((result) => {
       if (!result) {
         table.setEditingRow(null)
         setSelectedProduct(undefined)
-        refNmaeInput.current?.getElementsByTagName('input')[0].focus()
+        refNameInput.current?.getElementsByTagName('input')[0].focus()
       }
     })
   }
