@@ -14,13 +14,15 @@ import {
   useDeleteProductFromStorage,
   useUpdateProductInStorage
 } from '../../hooks/storage'
-import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material'
+import { Box, Button, IconButton, Tooltip, Typography, colors } from '@mui/material'
 import { Add, Delete, Edit } from '@mui/icons-material'
 import { langFormat } from '../../functions/langFormat'
 import toast from 'react-hot-toast'
 import { randomNumberRange } from '@renderer/functions/randomNumbers'
+import { useNavigate } from 'react-router-dom'
 
 function ProductsList(): JSX.Element {
+  const navigate = useNavigate()
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
 
   const {
@@ -268,6 +270,7 @@ function ProductsList(): JSX.Element {
         ru: 'Поиск'
       })
     },
+
     getRowId: (row) => row.id,
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateProduct,
@@ -277,6 +280,22 @@ function ProductsList(): JSX.Element {
     muiPaginationProps: {
       rowsPerPageOptions: [30, 60, 90, 120, fetchedProducts?.length || 150]
     },
+    muiTableBodyCellProps: ({ cell }) =>
+      cell.column.id === 'count'
+        ? {
+            sx: {
+              cursor: 'pointer',
+              ':hover': {
+                color: colors.blue[500],
+                fontWeight: 'bold'
+              }
+            },
+            onClick: () => {
+              const productId = cell.row.original.id
+              navigate(`${productId}`)
+            }
+          }
+        : {},
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: 'flex', gap: '1rem' }}>
         <Tooltip
