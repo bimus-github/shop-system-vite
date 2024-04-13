@@ -120,7 +120,6 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
   const table = useMaterialReactTable({
     columns,
     data: products || [],
-    enableSorting: false,
     enableDensityToggle: false,
     enableFullScreenToggle: false,
     enableColumnActions: false,
@@ -140,7 +139,13 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
       }
     },
     initialState: {
-      showGlobalFilter: true
+      showGlobalFilter: true,
+      sorting: [
+        {
+          id: 'count',
+          desc: false
+        }
+      ]
     },
     muiTableBodyRowProps: ({ row, table }) => ({
       onClick: () => {
