@@ -4,6 +4,7 @@ import { langFormat } from '@renderer/functions/langFormat'
 import { useGetProductsInStorage } from '@renderer/hooks/storage'
 import { Product_Type } from '@renderer/models/types'
 import { MRT_Cell, MRT_Column, MRT_Row, MRT_TableInstance } from 'material-react-table'
+import { useEffect } from 'react'
 import search from 'search-in-js'
 
 interface EditByProps {
@@ -25,6 +26,10 @@ export const EditName = ({
   ref
 }: EditByProps) => {
   const { data: productsInStorage } = useGetProductsInStorage()
+
+  useEffect(() => {
+    setSelectedProduct(original)
+  }, [original, setSelectedProduct])
   return (
     <Autocomplete
       options={productsInStorage || []}
