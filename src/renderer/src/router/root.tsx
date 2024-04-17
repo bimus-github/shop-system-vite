@@ -14,12 +14,15 @@ import {
 } from '../pages'
 import { PATH_NAME } from '../models/types'
 import { ProductsListInShop } from '../components/shops'
-import PrintModal from '../components/check-modal'
+import PrintModal from '../components/qr-code-print'
+import CheckPrintModal from '@renderer/components/check-print'
 
 export const root = createHashRouter(
   createRoutesFromElements(
     <Route path="/" element={<SideBar />}>
-      <Route path={PATH_NAME.SALE} element={<Sale />} />
+      <Route path={PATH_NAME.SALE} element={<Sale />}>
+        <Route path="/check-print/:roomId" element={<CheckPrintModal />} />
+      </Route>
       <Route path={PATH_NAME.STORAGE} element={<Storage />}>
         <Route path={':productId'} element={<PrintModal />} />
       </Route>
