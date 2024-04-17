@@ -21,6 +21,7 @@ import { useGetProductsInStorage } from '../../hooks/storage'
 import { useAddProductToRoom, useGetRoomProducts, useResetRoom } from '../../hooks/room'
 import { useGetClients } from '../../hooks/client'
 import { langFormat } from '../../functions/langFormat'
+import { useNavigate } from 'react-router-dom'
 
 interface SearchSideProps {
   currentPage: number
@@ -34,6 +35,7 @@ interface SearchSideProps {
 }
 
 function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps): JSX.Element {
+  const navigate = useNavigate()
   const searchRef = useRef<HTMLInputElement>(null)
   const [discount, setDiscount] = useState<number>(0)
   const [buyer, setBuyer] = useState<string>('')
@@ -129,7 +131,6 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
     enableColumnVirtualization: false,
     enableGlobalFilterModes: false,
     enableColumnFilters: false,
-    globalFilterFn: 'startsWithNoSpace',
     filterFns: {
       startsWithNoSpace: (row, id, value) => {
         return (row.getValue(id) as string)
@@ -178,6 +179,12 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
     }
   }
 
+  const handlePrintCheck = () => {
+    if (saledProducts) {
+      navigate('/check-print/' + currentPage)
+    }
+  }
+
   useEffect(() => {
     const keyDownFunc = (event: KeyboardEvent) => {
       switch (event.key) {
@@ -195,6 +202,9 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
           break
         case 'F5':
           handleRefund(saledProducts || [])
+          break
+        case 'F6':
+          handlePrintCheck()
           break
         case 'Enter': {
           const row = table.getFilteredRowModel().rows[0].original
@@ -369,6 +379,18 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
           disabled={!!disableMode}
         >
           {langFormat({ uzb: 'Qaytarish', ru: 'Возврат', en: 'Refund' })} [F5]
+        </Button>
+        <Button
+          onClick={() => handlePrintCheck()}
+          fullWidth
+          sx={{
+            bgcolor: colors.green[500],
+            fontWeight: '800',
+            color: 'white'
+          }}
+          disabled={!!disableMode}
+        >
+          {langFormat({ uzb: 'Chek', ru: 'Чек', en: 'Check' })} [F6]
         </Button>
       </ButtonGroup>
     </Box>
