@@ -63,7 +63,7 @@ const Body = (): JSX.Element => {
       money?.filter((m) => m.reason === MONEY_REASON.TAKE)?.reduce((a, b) => a + b.value, 0) || 0,
     [money]
   )
-  const myLoans = useMemo(() => shops?.reduce((a, b) => a + b.loan_price, 0) || 0, [shops])
+  const myLoans = useMemo(() => shops?.reduce((a, b) => a + b?.loan_price || 0, 0) || 0, [shops])
   const recived = useMemo(
     () =>
       shops?.reduce((a, b) => a + b?.products.reduce((x, y) => x + y.count * y.cost, 0), 0) || 0,
