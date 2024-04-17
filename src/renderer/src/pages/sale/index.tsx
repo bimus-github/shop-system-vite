@@ -8,6 +8,7 @@ import { Saled_Product_Type, SALE_FORM, Refund_Type } from '../../models/types'
 import { useCreateRefund } from '../../hooks/refunds'
 import toast from 'react-hot-toast'
 import { langFormat } from '@renderer/functions/langFormat'
+import { Outlet } from 'react-router-dom'
 
 function Sale(): JSX.Element {
   const [currentPage, setCurrentPage] = useState<number>(1)
@@ -117,6 +118,7 @@ function Sale(): JSX.Element {
       <Divider orientation="vertical" flexItem />
       <SaleSide currentPage={currentPage} />
       <Pagination setCurrentPage={setCurrentPage} />
+      <Outlet />
     </Box>
   )
 }
