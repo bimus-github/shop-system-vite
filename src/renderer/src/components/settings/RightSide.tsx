@@ -35,6 +35,15 @@ function RightSide(): JSX.Element {
   const { refetch: refetchRefunds } = useGetRefunds()
   const { refetch: refetchShops } = useGetShops()
   const { refetch: refetchSaledProducts } = useGetSaledProducts()
+  const [companyName, setCompanyName] = useState<string>(() => {
+    return localStorage.getItem('companyName') || ''
+  })
+  const [phoneNumber, setPhoneNumber] = useState<string>(() => {
+    return localStorage.getItem('phoneNumber') || ''
+  })
+  const [address, setAddress] = useState<string>(() => {
+    return localStorage.getItem('address') || ''
+  })
   const [username, setUsername] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [isOpened, setIsOpened] = useState<boolean>(false)
@@ -81,7 +90,6 @@ function RightSide(): JSX.Element {
     }
 
     setIsEntring(true)
-    localStorage.setItem('username', username)
 
     getAllSavedDataOfUser(user).then((allData) => {
       if (allData === Message_Forms.ERROR) {
@@ -106,6 +114,7 @@ function RightSide(): JSX.Element {
           })
         )
         setIsEntring(false)
+        localStorage.setItem('username', username)
         return
       }
 
@@ -331,6 +340,50 @@ function RightSide(): JSX.Element {
                 ru: 'Загрузка...'
               })}
           </Typography>
+          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+            <TextField
+              sx={{ width: '300px' }}
+              variant="standard"
+              placeholder={langFormat({
+                uzb: 'Korxona nomi',
+                en: 'Company name',
+                ru: 'Название компании'
+              })}
+              value={companyName}
+              onChange={(e) => {
+                setCompanyName(e.target.value)
+                localStorage.setItem('companyName', e.target.value)
+              }}
+            />
+            <TextField
+              sx={{ width: '300px' }}
+              variant="standard"
+              placeholder={langFormat({
+                uzb: 'Telefon Raqami',
+                en: 'Phone number',
+                ru: 'Номер телефона'
+              })}
+              value={phoneNumber}
+              onChange={(e) => {
+                setPhoneNumber(e.target.value)
+                localStorage.setItem('phoneNumber', e.target.value)
+              }}
+            />
+            <TextField
+              sx={{ width: '300px' }}
+              variant="standard"
+              placeholder={langFormat({
+                uzb: 'Manzil',
+                en: 'Address',
+                ru: 'Адрес'
+              })}
+              value={address}
+              onChange={(e) => {
+                setAddress(e.target.value)
+                localStorage.setItem('address', e.target.value)
+              }}
+            />
+          </Box>
         </Box>
       ) : (
         <Box
