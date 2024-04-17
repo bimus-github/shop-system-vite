@@ -49,8 +49,8 @@ function ShopsList(): JSX.Element {
       },
       {
         accessorKey: 'loan_price',
-        accessorFn: (row) =>
-          (row?.loan_price || 0).toLocaleString('ru-RU', { maximumFractionDigits: 0 }),
+        // accessorFn: (row) =>
+        //   (row?.loan_price || 0).toLocaleString('ru-RU', { maximumFractionDigits: 0 }),
         header: langFormat({ uzb: 'Qarzim', en: 'My Loan', ru: 'Задолженность' }),
 
         enableEditing: true,
@@ -64,13 +64,15 @@ function ShopsList(): JSX.Element {
             setValidationErrors(validationErrors)
           }
         },
-        Footer: ({ table }) => (
-          <Typography fontWeight={'bold'}>
-            {(
-              table.getFilteredRowModel().rows?.reduce((a, b) => a + b.original.loan_price, 0) || 0
-            ).toLocaleString('ru-RU', { maximumFractionDigits: 0 })}
-          </Typography>
-        )
+        Footer: ({ table }) => {
+          return (
+            <Typography fontWeight={'bold'}>
+              {table
+                .getFilteredRowModel()
+                .rows?.reduce((a, b) => a + b.original?.loan_price || 0, 0) || 0}
+            </Typography>
+          )
+        }
       },
       {
         accessorFn: (row) =>
@@ -178,7 +180,7 @@ function ShopsList(): JSX.Element {
       name: values.name || '',
       phone: values.phone || '',
       date: new Date().valueOf(),
-      loan_price: values.loan_price,
+      loan_price: +values.loan_price || 0,
       products: []
     }
 
@@ -206,10 +208,10 @@ function ShopsList(): JSX.Element {
 
     const updatedProduct: Shop_Type = {
       id: row.original.id,
-      name: row.original.name,
+      name: values.name,
       date: new Date(row.original.date).valueOf(),
-      loan_price: row.original.loan_price,
-      phone: row.original.phone,
+      loan_price: values.loan_price || 0,
+      phone: values.phone,
       products: row.original.products
     }
 
@@ -325,7 +327,8 @@ function ShopsList(): JSX.Element {
         : {},
     getRowId: (row) => row.id,
     state: {
-      isLoading: isShopsPending || isCreating || isUpdating || isDeleting,
+      isLoading: isShopsPending || isUpdating,
+      isSaving: isCreating || isUpdating || isDeleting,
       showAlertBanner:
         isShopsError ||
         isCreatingError ||
