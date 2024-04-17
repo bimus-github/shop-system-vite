@@ -60,7 +60,7 @@ const Body = () => {
     () => shops?.reduce((a, b) => a + b.products?.reduce((a, b) => a + b.count, 0), 0) || 0,
     [shops]
   )
-  const totalLoan = useMemo(() => shops?.reduce((a, b) => a + b.loan_price, 0) || 0, [shops])
+  const totalLoan = useMemo(() => shops?.reduce((a, b) => a + b?.loan_price || 0, 0) || 0, [shops])
   const totalCommingCost = useMemo(
     () =>
       shops?.reduce((a, b) => a + b.products?.reduce((a, b) => a + b.count * b.cost, 0), 0) || 0,
