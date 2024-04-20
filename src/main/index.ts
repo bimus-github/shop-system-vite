@@ -19,7 +19,7 @@ function createWindow(): void {
     }
   })
 
-  mainWindow.maximize()
+  mainWindow.fullScreen = true
   // mainWindow.webContents.openDevTools()
 
   mainWindow.on('ready-to-show', () => {
