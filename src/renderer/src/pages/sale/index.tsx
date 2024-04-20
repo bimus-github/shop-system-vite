@@ -110,7 +110,7 @@ function Sale(): JSX.Element {
       sx={{
         display: 'grid',
         gridTemplateColumns: '1fr 0.01fr 1fr',
-        height: '80vh',
+        height: '85vh',
         gap: 2
       }}
     >
