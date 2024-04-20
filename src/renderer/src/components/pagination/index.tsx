@@ -8,7 +8,7 @@ function Pagination({
 }): JSX.Element {
   return (
     <MuiPagination
-      sx={{ position: 'absolute', bottom: 10, right: 10 }}
+      sx={{ position: 'absolute', bottom: 0, right: 0 }}
       count={10}
       variant="outlined"
       shape="rounded"
