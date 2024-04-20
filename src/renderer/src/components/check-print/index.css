@@ -25,13 +25,11 @@
 }
 
 .paper {
-  width: 45mm;
+  width: 47mm;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 5px;
-  border: 1px solid #000;
 
   p {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode',
@@ -54,8 +52,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 5px;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid #494949;
     width: 100%;
     margin-top: 20px;
     color: #000;
@@ -66,7 +63,7 @@
     }
 
     .price {
-      font-size: 17px;
+      font-size: 14px;
       width: 100%;
       text-align: right;
       color: #000;
@@ -84,7 +81,7 @@
 
   .brand {
     text-align: start;
-    font-size: 12px;
+    font-size: 10px;
     color: #000;
   }
 
