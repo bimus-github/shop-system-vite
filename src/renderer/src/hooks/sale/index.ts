@@ -49,9 +49,7 @@ export function useGetSaledProducts() {
     queryFn: async () => {
       const products: Saled_Product_Type[] = await getSaledProducts()
       return products
-    },
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false
+    }
   })
 }
 
