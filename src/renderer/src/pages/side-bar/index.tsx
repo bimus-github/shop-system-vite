@@ -162,9 +162,9 @@ export default function MiniDrawer(): JSX.Element {
             <Link
               sx={{ fontSize: 'inherit', color: 'inherit', textDecoration: 'underline' }}
               target={'_blank'}
-              href={'tel:+998901617169'}
+              href={'tel:+998991090100'}
             >
-              TEL 📞
+              📞 (99) 109 01 00
             </Link>
           </Typography>
           <Typography sx={{ textAlign: 'center', fontSize: '0.6rem', color: 'red' }}>
