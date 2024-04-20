@@ -83,14 +83,13 @@ function CheckPrintModal(): JSX.Element {
             </p>
             <p className="small date">
               {langFormat({ en: 'Date', uzb: 'Sana', ru: 'Дата' })}:{' '}
-              {new Date().toLocaleDateString()}
+              {new Date().toLocaleString('ru-RU')}
             </p>
             <hr />
             {saledProducts?.map((product, index) => (
               <div key={product.id} className="item">
                 <p className="name">
-                  {index + 1}
-                  {product.name}
+                  {index + 1}. {product.name}
                 </p>
                 <p className="price">
                   {product.saled_price.toLocaleString('ru-RU')} X {product.saled_count}
@@ -103,6 +102,13 @@ function CheckPrintModal(): JSX.Element {
               {saledProducts
                 ?.reduce((a, b) => a + b.saled_price * b.saled_count, 0)
                 .toLocaleString('ru-RU')}
+            </p>
+            <p className="small" style={{ marginBottom: '10px' }}>
+              {langFormat({
+                uzb: 'Haridingiz uchun raxmat',
+                en: 'Thank you for using our service',
+                ru: 'Спасибо за использование нашего сервиса'
+              })}
             </p>
             <p className="brand">Do'konlarni aftomatlashtirish hizmati: (99) 109-01-00</p>
           </div>
