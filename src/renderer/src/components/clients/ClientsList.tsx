@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import {
   MRT_ColumnDef,
@@ -6,16 +7,18 @@ import {
   useMaterialReactTable
 } from 'material-react-table'
 import { useMemo, useState } from 'react'
-import { Client_Type } from '../../models/types'
-import { IconButton, Typography } from '@mui/material'
+import { Client_Type, SALE_FORM } from '../../models/types'
+import { Box, IconButton, Typography } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { useAddClient, useGetClients } from '../../hooks/client'
 import { langFormat } from '../../functions/langFormat'
 import { RowActions } from './RowActions'
 import { dateFormat } from '@renderer/functions/dateFormat'
+import { useGetSaledProducts } from '@renderer/hooks/sale'
 
 function ClientsList(): JSX.Element {
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
+  const { data: saledProdcucts } = useGetSaledProducts()
 
   const columns = useMemo<MRT_ColumnDef<Client_Type>[]>(
     () => [
@@ -40,6 +43,38 @@ function ClientsList(): JSX.Element {
         }
       },
       {
+        header: langFormat({ uzb: 'Nasiya', en: 'Loan', ru: 'Задолженность' }),
+        enableEditing: false,
+        accessorFn: (row) =>
+          saledProdcucts
+            ?.filter((p) => p.buyers_name === row.name && p.sale_form === SALE_FORM.LOAN)
+            .reduce((a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100), 0)
+            .toLocaleString() || 0,
+        Cell({ row }) {
+          const buyersProducts = saledProdcucts?.filter(
+            (p) => p.buyers_name === row.original.name && p.sale_form === SALE_FORM.LOAN
+          )
+          return (
+            <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <Typography>
+                {buyersProducts
+                  ?.reduce((a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100), 0)
+                  .toLocaleString() || 0}
+              </Typography>
+            </Box>
+          )
+        }
+      },
+      {
+        header: langFormat({ uzb: 'Jami Harid', en: 'Total', ru: 'Всего выдано' }),
+        enableEditing: false,
+        accessorFn: (row) =>
+          saledProdcucts
+            ?.filter((p) => p.buyers_name === row.name)
+            .reduce((a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100), 0)
+            .toLocaleString() || 0
+      },
+      {
         accessorKey: 'phone',
         header: langFormat({
           uzb: 'Telefon raqami',
@@ -57,12 +92,6 @@ function ClientsList(): JSX.Element {
             setValidationErrors(validationErrors)
           }
         }
-      },
-      {
-        accessorKey: 'date',
-        accessorFn: (row) => dateFormat(+row.date),
-        header: langFormat({ uzb: 'Sana', ru: 'Дата', en: 'Date' }),
-        enableEditing: false
       }
     ],
     [validationErrors]
@@ -89,7 +118,7 @@ function ClientsList(): JSX.Element {
       id: Math.random().toString(36).substring(7),
       name: values.name || '',
       phone: values.phone || '',
-      date: new Date().toLocaleDateString()
+      date: dateFormat(new Date())
     }
 
     addClient(newClient).then((result) => {
@@ -138,9 +167,10 @@ function ClientsList(): JSX.Element {
     enablePagination: false,
     positionActionsColumn: 'last',
     editDisplayMode: 'row',
-    onEditingRowSave: handleSaveClient,
     createDisplayMode: 'row',
+    renderRowActions: RowActions,
     onCreatingRowSave: handleAddClient,
+    onEditingRowSave: handleSaveClient,
     muiSearchTextFieldProps: {
       autoFocus: true,
       placeholder: langFormat({
@@ -158,7 +188,6 @@ function ClientsList(): JSX.Element {
         <Add fontSize="large" />
       </IconButton>
     ),
-    renderRowActions: RowActions,
     state: {
       isLoading: isFetchingClients,
       showAlertBanner: !!resultAdding || !!resultUpdating,
