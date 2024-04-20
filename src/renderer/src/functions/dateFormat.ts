@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-export const dateFormat = (date: number) => {
+export const dateFormat = (date: number | Date | string) => {
   return new Date(date).toLocaleDateString('ru-RU', {
     year: '2-digit',
     month: '2-digit',
