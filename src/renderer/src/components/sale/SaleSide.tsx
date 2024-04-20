@@ -144,16 +144,11 @@ const SaledProductsList = ({ currentPage }: { currentPage: number }): JSX.Elemen
     enableSorting: false,
     enableBottomToolbar: false,
     enableTopToolbar: false,
-    enableRowActions: true,
-    getRowId: (row) => row.id,
-    muiSearchTextFieldProps: {
-      autoFocus: true,
-      placeholder: langFormat({
-        uzb: 'Qidirish',
-        en: 'Search',
-        ru: 'Поиск'
-      })
-    },
+    enableRowActions: false,
+    enableFilters: false,
+    enableColumnActions: false,
+    enableColumnFilters: false,
+    enableColumnFilterModes: false,
     muiTableBodyRowProps: ({ row }) => ({
       sx:
         row.original.count === 0 ||
@@ -172,8 +167,7 @@ const SaledProductsList = ({ currentPage }: { currentPage: number }): JSX.Elemen
       : undefined,
     muiTableContainerProps: {
       sx: {
-        minHeight: '100%',
-        maxWidth: '100%'
+        height: '90%'
       }
     },
     onCreatingRowCancel: () => setValidationErrors({}),
