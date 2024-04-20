@@ -1,4 +1,4 @@
-import { Delete, Edit } from '@mui/icons-material'
+import { Delete } from '@mui/icons-material'
 import { Box, IconButton, Tooltip } from '@mui/material'
 import { langFormat } from '@renderer/functions/langFormat'
 import { useDeleteClient } from '@renderer/hooks/client'
@@ -13,22 +13,11 @@ type Props = {
 }
 
 export function RowActions(props: Props): JSX.Element {
-  const { row, table } = props
+  const { row } = props
 
   const { mutateAsync: deleteClient } = useDeleteClient()
   return (
     <Box sx={{ display: 'flex', gap: '1rem' }}>
-      <Tooltip
-        title={langFormat({
-          uzb: 'Tahrirlash',
-          ru: 'Редактировать',
-          en: 'Edit'
-        })}
-      >
-        <IconButton onClick={() => table.setEditingRow(row)}>
-          <Edit />
-        </IconButton>
-      </Tooltip>
       <Tooltip title={langFormat({ uzb: 'O`chirish', ru: 'Удалить', en: 'Delete' })}>
         <IconButton color="error" onClick={async () => await deleteClient(row.original)}>
           <Delete />
