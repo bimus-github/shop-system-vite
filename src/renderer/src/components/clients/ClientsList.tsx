@@ -8,7 +8,7 @@ import {
 } from 'material-react-table'
 import { useMemo, useState } from 'react'
 import { Client_Type, SALE_FORM } from '../../models/types'
-import { Box, IconButton, Typography } from '@mui/material'
+import { Box, IconButton, Typography, colors } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { useAddClient, useGetClients } from '../../hooks/client'
 import { langFormat } from '../../functions/langFormat'
@@ -48,20 +48,43 @@ function ClientsList(): JSX.Element {
         accessorFn: (row) =>
           saledProdcucts
             ?.filter((p) => p.buyers_name === row.name && p.sale_form === SALE_FORM.LOAN)
-            .reduce((a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100), 0)
-            .toLocaleString() || 0,
+            .reduce((a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100), 0) || 0,
+        accessorKey: 'loans',
         Cell({ row }) {
           const buyersProducts = saledProdcucts?.filter(
             (p) => p.buyers_name === row.original.name && p.sale_form === SALE_FORM.LOAN
           )
           return (
             <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <Typography>
+              <Typography color={colors.red[500]}>
                 {buyersProducts
                   ?.reduce((a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100), 0)
                   .toLocaleString() || 0}
               </Typography>
             </Box>
+          )
+        },
+        Footer(props) {
+          const { table } = props
+          return (
+            <Typography fontWeight={'bold'}>
+              {table
+                .getFilteredRowModel()
+                .rows?.reduce(
+                  (a, b) =>
+                    a +
+                      (
+                        saledProdcucts?.filter(
+                          (p) => p.buyers_name === b.original.name && p.sale_form === SALE_FORM.LOAN
+                        ) || []
+                      ).reduce(
+                        (x, y) => x + y.saled_count * y.saled_price * (1 - y.discount / 100),
+                        0
+                      ) || 0,
+                  0
+                )
+                .toLocaleString()}
+            </Typography>
           )
         }
       },
@@ -72,7 +95,28 @@ function ClientsList(): JSX.Element {
           saledProdcucts
             ?.filter((p) => p.buyers_name === row.name)
             .reduce((a, b) => a + b.saled_count * b.saled_price * (1 - b.discount / 100), 0)
-            .toLocaleString() || 0
+            .toLocaleString() || 0,
+        Footer(props) {
+          const { table } = props
+          return (
+            <Typography fontWeight={'bold'}>
+              {table
+                .getFilteredRowModel()
+                .rows?.reduce(
+                  (a, b) =>
+                    a +
+                      (
+                        saledProdcucts?.filter((p) => p.buyers_name === b.original.name) || []
+                      ).reduce(
+                        (x, y) => x + y.saled_count * y.saled_price * (1 - y.discount / 100),
+                        0
+                      ) || 0,
+                  0
+                )
+                .toLocaleString()}
+            </Typography>
+          )
+        }
       },
       {
         accessorKey: 'phone',
@@ -188,6 +232,14 @@ function ClientsList(): JSX.Element {
         <Add fontSize="large" />
       </IconButton>
     ),
+    initialState: {
+      sorting: [
+        {
+          id: 'loans',
+          desc: true
+        }
+      ]
+    },
     state: {
       isLoading: isFetchingClients,
       showAlertBanner: !!resultAdding || !!resultUpdating,
