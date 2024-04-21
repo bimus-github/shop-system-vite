@@ -5,7 +5,9 @@ import {
   Box,
   Button,
   ButtonGroup,
+  IconButton,
   TextField,
+  Tooltip,
   Typography,
   colors
 } from '@mui/material'
@@ -22,6 +24,7 @@ import { useAddProductToRoom, useGetRoomProducts, useResetRoom } from '../../hoo
 import { useGetClients } from '../../hooks/client'
 import { langFormat } from '../../functions/langFormat'
 import { useNavigate } from 'react-router-dom'
+import { Clear } from '@mui/icons-material'
 
 interface SearchSideProps {
   currentPage: number
@@ -36,6 +39,8 @@ interface SearchSideProps {
 
 function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps): JSX.Element {
   const navigate = useNavigate()
+  const [saerchValue, setSearchValue] = useState('')
+
   const searchRef = useRef<HTMLInputElement>(null)
   const [discount, setDiscount] = useState<number>(0)
   const [buyer, setBuyer] = useState<string>('')
@@ -116,6 +121,7 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
     addProduct(newSaledProduct).then(() => {
       refetch()
       table.setGlobalFilter('')
+      setSearchValue('')
     })
   }
 
@@ -154,14 +160,36 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
         searchRef.current?.getElementsByTagName('input')[0].focus()
       }
     }),
-    muiSearchTextFieldProps: {
-      ref: searchRef,
-      autoFocus: true,
-      placeholder: langFormat({
-        uzb: 'Qidirish',
-        ru: 'Поиск',
-        en: 'Search'
-      })
+    renderTopToolbar: () => {
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <TextField
+            ref={searchRef}
+            value={saerchValue}
+            placeholder={langFormat({
+              uzb: 'Qidirish',
+              ru: 'Поиск',
+              en: 'Search'
+            })}
+            sx={{ width: '90%', m: 1 }}
+            onChange={(e) => {
+              setSearchValue(e.target.value)
+              table.setGlobalFilter(e.target.value)
+            }}
+          />
+          <Tooltip title={langFormat({ uzb: 'Tozalash', ru: 'Очистить', en: 'Clear' })}>
+            <IconButton
+              onClick={() => {
+                setSearchValue('')
+                table.setGlobalFilter(undefined)
+                searchRef.current?.getElementsByTagName('input')[0].focus()
+              }}
+            >
+              <Clear />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      )
     },
     muiTableContainerProps: {
       sx: {
