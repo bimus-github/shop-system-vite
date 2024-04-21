@@ -63,6 +63,7 @@ const SaledProductsList = ({ currentPage }: { currentPage: number }): JSX.Elemen
               value={cell.getValue() === 0 ? '' : cell.getValue()}
               type="text"
               variant="outlined"
+              size="small"
               onChange={(e) => {
                 transition[1](() => {
                   updateproducts({
@@ -97,6 +98,7 @@ const SaledProductsList = ({ currentPage }: { currentPage: number }): JSX.Elemen
               value={cell.getValue() === 0 ? '' : cell.getValue()}
               type="text"
               variant="outlined"
+              size="small"
               onChange={(e) => {
                 transition[1](() => {
                   updateproducts({
@@ -144,11 +146,9 @@ const SaledProductsList = ({ currentPage }: { currentPage: number }): JSX.Elemen
     enableSorting: false,
     enableBottomToolbar: false,
     enableTopToolbar: false,
-    enableRowActions: false,
-    enableFilters: false,
-    enableColumnActions: false,
-    enableColumnFilters: false,
-    enableColumnFilterModes: false,
+    enableRowActions: true,
+    enableDensityToggle: false,
+    enableFullScreenToggle: false,
     muiTableBodyRowProps: ({ row }) => ({
       sx:
         row.original.count === 0 ||
