@@ -10,7 +10,8 @@ export const useGetClients = () => {
     queryFn: async () => {
       const clients: Client_Type[] = await getClients()
       return clients || []
-    }
+    },
+    refetchOnWindowFocus: false
   })
 }
 
