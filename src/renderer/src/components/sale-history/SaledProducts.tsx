@@ -15,14 +15,7 @@ import { useGetSaledProducts, useUpdateSaledProduct } from '../../hooks/sale'
 import { langFormat } from '../../functions/langFormat'
 import RowActions from './RowActions'
 import TopToolbarCustomActions from './TopToolbarCustomActions'
-import {
-  FilterByBuyer,
-  FilterByDate,
-  FilterBySaleForm,
-  PriceFooter,
-  ProfitFooter,
-  SalefFromCell
-} from './ColumnCompenents'
+import { FilterByBuyer, PriceFooter, ProfitFooter, SalefFromCell } from './ColumnCompenents'
 import { dateFormat } from '@renderer/functions/dateFormat'
 
 function SaledProducts(): JSX.Element {
@@ -53,6 +46,7 @@ function SaledProducts(): JSX.Element {
           en: 'Sale form'
         }),
         editVariant: 'select',
+        filterVariant: 'select',
         size: 80,
         editSelectOptions: saleFormOptions,
         muiEditTextFieldProps: {
@@ -65,8 +59,7 @@ function SaledProducts(): JSX.Element {
             setValidationErrors(validationErrors)
           }
         },
-
-        Filter: FilterBySaleForm,
+        filterSelectOptions: saleFormOptions,
         Cell: SalefFromCell
       },
       {
@@ -183,8 +176,6 @@ function SaledProducts(): JSX.Element {
         }),
         enableEditing: false,
         accessorFn: (row) => dateFormat(row.saled_date),
-        // default value to filter input
-        Filter: FilterByDate,
         size: 130
       }
     ],
@@ -226,6 +217,9 @@ function SaledProducts(): JSX.Element {
     data: data || [],
     enableFullScreenToggle: false,
     enableDensityToggle: false,
+    enableColumnActions: false,
+    enableGlobalFilter: false,
+    enableBottomToolbar: false,
     enableRowNumbers: true,
     enableEditing: true,
     positionActionsColumn: 'last',
@@ -238,17 +232,17 @@ function SaledProducts(): JSX.Element {
     selectAllMode: 'all',
     muiPaginationProps: ({ table }) => ({
       rowsPerPageOptions: [
-        30,
-        60,
-        90,
-        table.getFilteredRowModel().rows.length > 120
+        50,
+        100,
+        150,
+        table.getFilteredRowModel().rows.length > 200
           ? table.getFilteredRowModel().rows.length
-          : 120
+          : 200
       ]
     }),
     onEditingRowSave: handleUpdateSaledProduct,
     initialState: {
-      pagination: { pageIndex: 0, pageSize: 30 },
+      pagination: { pageIndex: 0, pageSize: 50 },
       columnVisibility: {
         barcode: false,
         saled_price: false,
@@ -256,7 +250,17 @@ function SaledProducts(): JSX.Element {
         discount: false,
         profit: false
       },
-      showGlobalFilter: true
+      showGlobalFilter: true,
+      columnFilters: [
+        {
+          id: 'saled_date',
+          value: dateFormat(new Date(), true)
+        },
+        {
+          id: 'sale_form',
+          value: SALE_FORM.LOAN
+        }
+      ]
     },
     muiSelectCheckboxProps: {
       color: 'success'
@@ -269,7 +273,7 @@ function SaledProducts(): JSX.Element {
       })
     },
     state: {
-      isLoading: isFetchingSaledProducts,
+      isSaving: isFetchingSaledProducts,
       showAlertBanner: !!resultUpdating,
       showColumnFilters: true
     },
