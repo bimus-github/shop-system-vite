@@ -352,7 +352,7 @@ function ProductsListInShop(): JSX.Element {
               ))
             }}
           >
-            <Delete />
+            <Delete sx={{ color: 'red' }} />
           </IconButton>
         </Tooltip>
       </Box>
