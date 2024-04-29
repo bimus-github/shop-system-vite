@@ -20,7 +20,7 @@ export function RowActions(props: Props): JSX.Element {
     <Box sx={{ display: 'flex', gap: '1rem' }}>
       <Tooltip title={langFormat({ uzb: 'O`chirish', ru: 'Удалить', en: 'Delete' })}>
         <IconButton color="error" onClick={async () => await deleteClient(row.original)}>
-          <Delete />
+          <Delete sx={{ color: 'red' }} />
         </IconButton>
       </Tooltip>
     </Box>
