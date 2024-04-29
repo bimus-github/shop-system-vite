@@ -295,7 +295,7 @@ function ShopsList(): JSX.Element {
         </Tooltip>
         <Tooltip title={langFormat({ uzb: 'O’chirish', en: 'Delete', ru: 'Удалить' })}>
           <IconButton color="error" onClick={() => handleDeleteShop(row.id)}>
-            <Delete />
+            <Delete sx={{ color: 'red' }} />
           </IconButton>
         </Tooltip>
       </Box>
