@@ -13,7 +13,6 @@ import {
   ListItemIcon,
   ListItemText,
   Tooltip,
-  colors,
   Link
 } from '@mui/material'
 
@@ -86,7 +85,7 @@ export default function MiniDrawer(): JSX.Element {
                 ru: route.title.ru
               })}
             >
-              <ListItem disablePadding sx={{ display: 'block', p: 1 }}>
+              <ListItem disablePadding sx={{ display: 'block', p: 0.5 }}>
                 <ListItemButton
                   onClick={() => navigate(route.path)}
                   sx={[
@@ -94,20 +93,9 @@ export default function MiniDrawer(): JSX.Element {
                       minHeight: 48,
                       justifyContent: open ? 'initial' : 'center',
                       px: 2.5,
-                      borderRadius: 2
-                    },
-                    pathname === route.path && {
-                      backgroundColor: colors.amber[300],
-                      color: 'primary.contrastText',
-                      '& .MuiListItemIcon-root': {
-                        color: 'inherit'
-                      },
-                      '& .MuiListItemText-primary': {
-                        fontWeight: 'bold'
-                      },
-                      ':hover': {
-                        backgroundColor: 'transparent'
-                      }
+                      borderRadius: 2,
+                      bgcolor: route.path === pathname ? 'primary.main' : 'transparent',
+                      color: route.path === pathname ? 'primary.contrastText' : 'inherit'
                     }
                   ]}
                 >
