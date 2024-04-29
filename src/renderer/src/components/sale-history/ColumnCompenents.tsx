@@ -112,7 +112,6 @@ export function FilterBySaleForm(props: FilterByProps): JSX.Element {
     <Autocomplete
       {...props}
       options={Object.values(SALE_FORM)}
-      defaultValue={SALE_FORM.LOAN}
       onInputChange={(_, value) => {
         props.column.setFilterValue(value)
       }}
