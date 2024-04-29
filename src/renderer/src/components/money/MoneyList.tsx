@@ -217,7 +217,7 @@ function MoneyList(): JSX.Element {
               ))
             }}
           >
-            <Delete />
+            <Delete sx={{ color: 'red' }} />
           </IconButton>
         </Tooltip>
       </Box>
