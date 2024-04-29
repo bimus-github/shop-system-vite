@@ -10,7 +10,7 @@ import { useMemo } from 'react'
 import { useGetProductsInStorage } from '@renderer/hooks/storage'
 
 const Head = (): JSX.Element => (
-  <TableRow sx={{ bgcolor: 'primary.main', color: 'white' }}>
+  <TableRow sx={{ bgcolor: 'divider', color: 'white' }}>
     <TableCell sx={{ fontWeight: 'bold' }}>
       <Tooltip
         title={langFormat({
