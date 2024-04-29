@@ -311,7 +311,7 @@ function ProductsList(): JSX.Element {
         </Tooltip>
         <Tooltip title={langFormat({ uzb: 'O`chirish', en: 'Delete', ru: 'Удалить' })}>
           <IconButton color="error" onClick={() => handleDeleteProduct(row.original.id)}>
-            <Delete />
+            <Delete sx={{ color: 'red' }} />
           </IconButton>
         </Tooltip>
       </Box>
