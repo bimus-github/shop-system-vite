@@ -18,8 +18,8 @@ import { langFormat } from '../../functions/langFormat'
 import { fontFamilies } from '../../constants'
 
 function LeftSide(): JSX.Element {
-  const [isDark, setIsDark] = useState(true)
   const [fontSize, setFontSize] = useState(18)
+  const [isDark, setIsDark] = useState(true)
   const [lang, setLang] = useState<LANGUAGE>(LANGUAGE.UZB)
   const [fontFamily, setFontFamily] = useState(fontFamilies[0])
 
