@@ -7,7 +7,7 @@ import { useMemo } from 'react'
 
 const Head = () => {
   return (
-    <TableRow sx={{ bgcolor: 'primary.main', color: 'white' }}>
+    <TableRow sx={{ bgcolor: 'divider', color: 'white' }}>
       <TableCell sx={{ fontWeight: 'bold' }}>
         {langFormat({ uzb: 'Soni', en: 'Count', ru: 'Количество' })}
       </TableCell>
