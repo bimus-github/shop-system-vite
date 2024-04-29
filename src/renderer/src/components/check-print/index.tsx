@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { useEffect, useRef } from 'react'
-import { Modal as MuiModal, Typography, Button, FormControl } from '@mui/material'
+import { Modal as MuiModal, Button, FormControl } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import './index.css'
 
@@ -66,55 +66,49 @@ function CheckPrintModal(): JSX.Element {
           handlePrint()
         }}
       >
-        {!saledProducts?.length ? (
-          <Typography>
-            {langFormat({
-              en: 'Product not found',
-              uzb: 'Mahsulot topilmadi',
-              ru: 'Товар не найден'
-            })}
-          </Typography>
-        ) : (
-          <div className="container">
-            <div ref={printRef} className="paper">
-              <p className="title">{companyName}</p>
-              <p className="small">
-                TEL: {phoneNumber} <br />
-                {langFormat({ en: 'Address', uzb: 'Manzil', ru: 'Адрес' })}: {address}
-              </p>
-              <p className="small date">
-                {langFormat({ en: 'Date', uzb: 'Sana', ru: 'Дата' })}:{' '}
-                {new Date().toLocaleString('ru-RU')}
-              </p>
-              <hr />
-              {saledProducts?.map((product, index) => (
-                <div key={product.id} className="item">
-                  <p className="name">
-                    {index + 1}. {product.name}
-                  </p>
-                  <p className="price">
-                    {product.saled_price.toLocaleString('ru-RU')} X {product.saled_count}
-                  </p>
-                </div>
-              ))}
-              <hr />
-              <p className="total">
-                {langFormat({ en: 'Total', uzb: 'Jami', ru: 'Всего' })}:{' '}
-                {saledProducts
-                  ?.reduce((a, b) => a + b.saled_price * b.saled_count, 0)
-                  .toLocaleString('ru-RU')}
-              </p>
-              <p className="small" style={{ marginBottom: '10px' }}>
-                {langFormat({
-                  uzb: 'Haridingiz uchun raxmat',
-                  en: 'Thank you for using our service',
-                  ru: 'Спасибо за использование нашего сервиса'
-                })}
-              </p>
-              <p className="brand">Do'konlarni aftomatlashtirish hizmati: (99) 109-01-00</p>
-            </div>
+        <div className="container">
+          <div ref={printRef} className="paper">
+            <p className="title">{companyName}</p>
+            <p className="small">
+              TEL: {phoneNumber} <br />
+              {langFormat({ en: 'Address', uzb: 'Manzil', ru: 'Адрес' })}: {address}
+            </p>
+            {saledProducts.length !== 0 && (
+              <>
+                <p className="small date">
+                  {langFormat({ en: 'Date', uzb: 'Sana', ru: 'Дата' })}:{' '}
+                  {new Date().toLocaleString('ru-RU')}
+                </p>
+                <hr />
+                {saledProducts?.map((product, index) => (
+                  <div key={product.id} className="item">
+                    <p className="name">
+                      {index + 1}. {product.name}
+                    </p>
+                    <p className="price">
+                      {product.saled_price.toLocaleString('ru-RU')} X {product.saled_count}
+                    </p>
+                  </div>
+                ))}
+                <hr />
+                <p className="total">
+                  {langFormat({ en: 'Total', uzb: 'Jami', ru: 'Всего' })}:{' '}
+                  {saledProducts
+                    ?.reduce((a, b) => a + b.saled_price * b.saled_count, 0)
+                    .toLocaleString('ru-RU')}
+                </p>
+              </>
+            )}
+            <p className="small" style={{ marginBottom: '10px' }}>
+              {langFormat({
+                uzb: 'Haridingiz uchun raxmat',
+                en: 'Thank you for using our service',
+                ru: 'Спасибо за использование нашего сервиса'
+              })}
+            </p>
+            <p className="brand">Do'konlarni aftomatlashtirish hizmati: (99) 109-01-00</p>
           </div>
-        )}
+        </div>
 
         <Button
           type="submit"
