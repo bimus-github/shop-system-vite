@@ -66,7 +66,7 @@ function RowActions(props: Props): JSX.Element {
             ))
           }}
         >
-          <Delete />
+          <Delete sx={{ color: 'red' }} />
         </IconButton>
       </Tooltip>
       <Tooltip
