@@ -11,48 +11,46 @@ export const theme = ({
 }): ReturnType<typeof createTheme> => {
   return createTheme({
     palette: {
-      mode,
-      primary:
-        mode === 'dark'
-          ? {
-              light: '#333333',
-              main: '#232323',
-              dark: '#000000',
-              contrastText: '#fff'
-            }
-          : {
-              light: '#ffffff',
-              main: '#f5f5f5',
-              dark: '#e6e6e6',
-              contrastText: '#000'
-            },
-      secondary:
-        mode === 'dark'
-          ? {
-              light: '#4f4f4f',
-              main: '#232323',
-              dark: '#181818',
-              contrastText: '#fff'
-            }
-          : {
-              light: '#c1c1c1',
-              main: '#b2b2b2',
-              dark: '#7c7c7c',
-              contrastText: '#000'
-            },
+      mode: mode,
+      primary: {
+        main: mode === 'light' ? colors.blue[500] : colors.grey[700],
+        contrastText: colors.common.white
+      },
+      secondary: {
+        main: mode === 'light' ? colors.blueGrey[900] : colors.grey[100],
+        contrastText: mode === 'light' ? colors.common.white : colors.common.black
+      },
       background: {
-        default: mode === 'dark' ? colors.grey[900] : colors.grey[200],
-        paper: mode === 'dark' ? colors.grey[900] : colors.grey[200]
+        default: mode === 'light' ? colors.common.white : colors.common.black,
+        paper: mode === 'light' ? colors.common.white : colors.common.black
+      },
+      text: {
+        primary: mode === 'light' ? colors.common.black : colors.common.white,
+        disabled: mode === 'light' ? colors.grey[600] : colors.grey[400],
+        secondary: mode === 'light' ? colors.blue[500] : colors.blueGrey[200]
+      },
+      divider: mode === 'light' ? colors.grey[300] : colors.grey[900],
+      action: {
+        hover: mode === 'light' ? colors.blue[200] : colors.grey[500]
+      },
+      common: {
+        black: colors.grey[800],
+        white: colors.grey[100]
+      },
+      contrastThreshold: 3,
+      error: {
+        main: colors.red[500],
+        contrastText: colors.common.white
       }
     },
     components: {
-      MuiPaper: {
-        styleOverrides: {
-          root: {
-            boxShadow: 'none',
-            borderRadius: 0,
-            borderBottom: '1px solid lightgray',
-            borderTop: '1px solid lightgray'
+      MuiSvgIcon: {
+        defaultProps: {
+          sx: {
+            color: 'text.primary',
+            ':active': {
+              color: 'primary.contrastText'
+            }
           }
         }
       }
