@@ -177,7 +177,7 @@ const SaledProductsList = ({ currentPage }: { currentPage: number }): JSX.Elemen
       <Box sx={{ display: 'flex', gap: '1rem' }}>
         <Tooltip title={langFormat({ uzb: 'O`chirish', ru: 'Удалить', en: 'Delete' })}>
           <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <Delete />
+            <Delete sx={{ color: 'red' }} />
           </IconButton>
         </Tooltip>
       </Box>
