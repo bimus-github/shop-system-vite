@@ -132,7 +132,7 @@ function RefundsList(): JSX.Element {
               ))
             }}
           >
-            <Delete />
+            <Delete sx={{ color: 'red' }} />
           </IconButton>
         </Tooltip>
       </Box>
