@@ -44,12 +44,14 @@ export function useUpdateSaledProduct() {
 }
 
 export function useGetSaledProducts() {
+  const queryClient = useQueryClient()
   return useQuery<Saled_Product_Type[], Error>({
     queryKey: ['saledProducts'],
     queryFn: async () => {
       const products: Saled_Product_Type[] = await getSaledProducts()
       return products
-    }
+    },
+    initialData: () => queryClient.getQueryData(['saledProducts']) as Saled_Product_Type[]
   })
 }
 
