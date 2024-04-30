@@ -5,13 +5,15 @@ import { createProduct, deleteProduct, getProducts, updateProduct } from '../../
 import { Message_Forms } from '../../models/message'
 
 export const useGetProductsInStorage = () => {
+  const queryClient = useQueryClient()
   return useQuery<Product_Type[], Error>({
     queryKey: ['products'],
     queryFn: async () => {
       const products: Product_Type[] = await getProducts()
 
       return products
-    }
+    },
+    initialData: () => queryClient.getQueryData(['products']) as Product_Type[]
   })
 }
 
