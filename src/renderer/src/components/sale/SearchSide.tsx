@@ -165,6 +165,7 @@ function SearchSide({ currentPage, handleSale, handleRefund }: SearchSideProps):
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <TextField
             ref={searchRef}
+            autoFocus
             value={saerchValue}
             placeholder={langFormat({
               uzb: 'Qidirish',
