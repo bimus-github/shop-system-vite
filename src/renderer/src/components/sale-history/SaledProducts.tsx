@@ -218,7 +218,6 @@ function SaledProducts(): JSX.Element {
     enableFullScreenToggle: false,
     enableDensityToggle: false,
     enableColumnActions: false,
-    enableGlobalFilter: false,
     enableBottomToolbar: false,
     enableRowNumbers: true,
     enableEditing: true,

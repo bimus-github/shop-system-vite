@@ -204,6 +204,8 @@ function RightSide(): JSX.Element {
     }
   }, [])
 
+  console.log(data)
+
   return (
     <Box>
       {isOpened ? (

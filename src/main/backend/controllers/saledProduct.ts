@@ -4,7 +4,7 @@ import { Product_Type, SALE_FORM, Saled_Product_Type } from '../../models/types'
 import ProductModel from '../schemas/productModel'
 import SaledProductModel from '../schemas/saledModel'
 import { addToStock } from './product'
-import fs from 'fs'
+// import fs from 'fs'
 
 export const getSaledProducts = async () => {
   try {
